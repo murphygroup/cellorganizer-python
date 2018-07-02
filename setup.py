@@ -7,5 +7,6 @@ setup(name='cellorganizer',
       maintainer='Robert F. Murphy',
       maintainer_email='murphy@cmu.edu',
       url='http://www.cellorganizer.org',
-      packages = ['cellorganizer'])
+      packages = ['cellorganizer'],
+      )
 
