@@ -98,8 +98,8 @@ def slml2report(model1_filename, model2_filename):
 #######################################################################
 def __options2txt(options,filename):
     f = open(filename,"w")
-
-    keys = options.keys()
+    keys = list(options.keys())
+    keys.sort()
     for key in keys:
         if isinstance(options[key],str):
             if 'pwd' in options[key]:
@@ -132,16 +132,19 @@ def __options2txt(options,filename):
                     # if element in list is str
                     if isinstance(element,str):
                         text = text + "'" + element + "',"   
-                    # if element in list is not str
+            # if element in list is float, keep three decimal places
+                    elif isinstance(element,float):
+                        text = text + str('%.3f' % element) + "," 
                     else:
-                        text = text + str(element) + ","                                   
+                        text = text + str(element) + ","
                 text = text[:-1]
                 text = text+"];\n"
+        elif isinstance(options[key],float):
+            text = 'options.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
         else:
-            text = 'options.'+key+ ' = ' +options[key]+';\n'
+            text = 'options.'+key+ ' = ' +str(options[key])+';\n'
         f.write(text)                                    
     f.close()
-
 
 
 
@@ -253,3 +256,4 @@ def __mat2simplyDict(matfile):
     ans= {}
     printKeys(model,ans)
     return ans
+
