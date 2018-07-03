@@ -8,8 +8,8 @@ import scipy.io
 def img2slml(dim, dna, cell, protein, options):
     txtfilename = "input.txt"
     __options2txt(options,txtfilename)
-    f = open("txtfilename,"a")
-
+    f = open(txtfilename,"a")
+    
     text = "dimensionality = '" + dim +"';\n"
     f.write(text)
 
@@ -108,6 +108,8 @@ def __options2txt(options,filename):
                 else:
                     text =  'options.'+key+' = '+"["+ options[key]+"];\n"
             # if value is list or matrix
+            elif options[key] == 'date':
+                text = 'options.'+key+' = '+ options[key]+";\n"
             elif '[' in options[key]: 
                 text = 'options.'+key+' = '+ options[key]+";\n"
             # if value is a function
@@ -122,16 +124,19 @@ def __options2txt(options,filename):
                 text = 'options.'+key+' = '+ 'false;\n'
         # if value is list
         elif isinstance(options[key],list):
-            text = 'options.'+key+' = ['
-            for element in options[key]:
-                # if element in list is str
-                if isinstance(element,str):
-                    text = text + "'" + element + "',"   
-                # if element in list is not str
-                else:
-                    text = text + str(element) + ","                                   
-            text = text[:-1]
-            text = text+"];\n"
+            if len(options[key])<1:
+                text = 'options.'+key+' = [];\n'
+            else:
+                text = 'options.'+key+' = ['
+                for element in options[key]:
+                    # if element in list is str
+                    if isinstance(element,str):
+                        text = text + "'" + element + "',"   
+                    # if element in list is not str
+                    else:
+                        text = text + str(element) + ","                                   
+                text = text[:-1]
+                text = text+"];\n"
         else:
             text = 'options.'+key+ ' = ' +options[key]+';\n'
         f.write(text)                                    
