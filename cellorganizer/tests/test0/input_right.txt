@@ -1,0 +1,7 @@
+options.compression = 'lzw';
+options.debug = false;
+options.display = false;
+options.numberOfSynthesizedImages = 1;
+options.prefix = 'img';
+options.targetDirectory = pwd;
+options.verbose = true;
