@@ -6,9 +6,10 @@ import scipy.io
 ########################################################################
 ########################################################################
 def img2slml(dim, dna, cell, protein, options):
+    txtfilename = "input.txt"
+    __options2txt(options,txtfilename)
+    f = open(txtfilename,"a")
     
-    f = open("input.txt","w")
-
     text = "dimensionality = '" + dim +"';\n"
     f.write(text)
 
@@ -40,25 +41,6 @@ def img2slml(dim, dna, cell, protein, options):
     text = text[:-1]
     text = text+"};\n"
     f.write(text)
-
-    keys = options.keys()
-    for key in keys:
-        if isinstance(options[key],str):
-            if 'pwd' in options[key]:
-                if options[key] == 'pwd':
-                    text = 'options.'+key+' = '+ options[key]+";\n"
-                else:
-                    text =  'options.'+key+' = '+"["+ options[key]+"];\n"
-            else:
-                text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
-        elif isinstance(options[key],bool):
-            if options[key]:
-                text = 'options.'+key+' = '+ 'true;\n'
-            else:      
-                text = 'options.'+key+' = '+ 'false;\n'
-        else:
-            text = 'options.'+key+ ' = ' +options[key]+';\n'
-        f.write(text)                                    
     f.close()
 
     os.system("slml2img input.txt;rm input.txt")   
@@ -67,8 +49,8 @@ def img2slml(dim, dna, cell, protein, options):
 
 ########################################################################
 def slml2img(filenames, options):
-    keys = options.keys()
-    f = open("input.txt","w")
+    __options2txt(options,"input.txt")
+    f = open("input.txt","a")
     f.write("filenames = {")
     text = ""
     for name in filenames:
@@ -77,24 +59,6 @@ def slml2img(filenames, options):
     text = text[:-1]
     text = text+"};\n"
     f.write(text)
-        
-    for key in keys:
-        if isinstance(options[key],str):
-            if 'pwd' in options[key]:
-                if options[key] == 'pwd':
-                    text = 'options.'+key+' = '+ options[key]+";\n"
-                else:
-                    text =  'options.'+key+' = '+"["+ options[key]+"];\n"
-            else:
-                text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
-        elif isinstance(options[key],bool):
-            if options[key]:
-                text = 'options.'+key+' = '+ 'true;\n'
-            else:      
-                text = 'options.'+key+' = '+ 'false;\n'
-        else:
-            text = 'options.'+key+ ' = ' +options[key]+';\n'
-        f.write(text)                                    
     f.close()
 
     os.system("img2slml input.txt;rm input.txt")
@@ -132,6 +96,58 @@ def slml2report(model1_filename, model2_filename):
 #Private Method
 #######################################################################
 #######################################################################
+def __options2txt(options,filename):
+    f = open(filename,"w")
+    keys = list(options.keys())
+    keys.sort()
+    for key in keys:
+        if isinstance(options[key],str):
+            if 'pwd' in options[key]:
+                if options[key] == 'pwd':
+                    text = 'options.'+key+' = '+ options[key]+";\n"
+                else:
+                    text =  'options.'+key+' = '+"["+ options[key]+"];\n"
+            # if value is list or matrix
+            elif options[key] == 'date':
+                text = 'options.'+key+' = '+ options[key]+";\n"
+            elif '[' in options[key]: 
+                text = 'options.'+key+' = '+ options[key]+";\n"
+            # if value is a function
+            elif '(' in options[key]:
+                text = 'options.'+key+' = '+ options[key]+";\n"
+            else:
+                text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
+        elif isinstance(options[key],bool):
+            if options[key]:
+                text = 'options.'+key+' = '+ 'true;\n'
+            else:      
+                text = 'options.'+key+' = '+ 'false;\n'
+        # if value is list
+        elif isinstance(options[key],list):
+            if len(options[key])<1:
+                text = 'options.'+key+' = [];\n'
+            else:
+                text = 'options.'+key+' = ['
+                for element in options[key]:
+                    # if element in list is str
+                    if isinstance(element,str):
+                        text = text + "'" + element + "',"   
+            # if element in list is float, keep three decimal places
+                    elif isinstance(element,float):
+                        text = text + str('%.3f' % element) + "," 
+                    else:
+                        text = text + str(element) + ","
+                text = text[:-1]
+                text = text+"];\n"
+        elif isinstance(options[key],float):
+            text = 'options.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
+        else:
+            text = 'options.'+key+ ' = ' +str(options[key])+';\n'
+        f.write(text)                                    
+    f.close()
+
+
+
 # The input is shallow model dictionary
 def __shallowdict2mat(model):
     tem_dic = {}
@@ -240,3 +256,4 @@ def __mat2simplyDict(matfile):
     ans= {}
     printKeys(model,ans)
     return ans
+
