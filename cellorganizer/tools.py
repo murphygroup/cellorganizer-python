@@ -1,8 +1,10 @@
 import os
 import numpy as np
 import scipy.io
+import matplotlib.pyplot as plt
+from pathlib import Path
 
-# Public Method
+# Public Methods
 ########################################################################
 ########################################################################
 def img2slml(dim, dna, cell, protein, options):
@@ -92,8 +94,17 @@ def slml2report(model1_filename, model2_filename):
     os.system('slml2report {} {}'.format(model1_filename, model2_filename))
     return None
 
+#######################################################################
+def imshow(img_path, options):
+    img_file = Path(img_path)
+    if img_file.is_file():
+        img = plt.imread(img_path)
+        plt.imshow(img)
+        plt.show()
+    else
+        print("Invalid file path.")
 
-#Private Method
+#Private Methods
 #######################################################################
 #######################################################################
 def __options2txt(options,filename):
@@ -151,8 +162,7 @@ def __options2txt(options,filename):
 # The input is shallow model dictionary
 def __shallowdict2mat(model):
     tem_dic = {}
-    
-#put each element into the fixed dictionary
+    #put each element into the fixed dictionary
     for key,value in model.items():
         Key_list = key.split('.')
         if len(Key_list)>1:
@@ -191,6 +201,7 @@ def __mat2numpy(matfile,savefile,parameter=None):
 	except:
 		print("__mat2numpy:Can't save the numpy file")
 		return False
+
 def __mat2python(matfile,parameter=None):
 	'''
 	__mat2python reads a .mat file which contains a struct representing a model and returns a dictionary corresponding to the matlab struct
@@ -232,7 +243,7 @@ def __convert(model):
 
 def __getmodel(model):
     path=os.sep.join(cellorganizer.__file__.split(os.sep)[0:-1])+os.sep+"models"+os.sep+model
-    #when you are importing cellorganizer in the distribution directory, the path will be the local path
+    # when you are importing cellorganizer in the distribution directory, the path will be the local path
     if path.index('cellorganizer')==0:
         print("You are importing cellorganizer in the distribution folder")
         path=path.split('cellorganizer'+os.sep)[1]
@@ -256,4 +267,5 @@ def __mat2simplyDict(matfile):
     ans= {}
     printKeys(model,ans)
     return ans
+
 
