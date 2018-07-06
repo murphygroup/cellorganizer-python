@@ -43,7 +43,7 @@ def img2slml(dim, dna, cell, protein, options):
     f.write(text)
     f.close()
 
-    os.system("slml2img input.txt;rm input.txt")   
+    os.system("img2slml input.txt;rm input.txt")   
     return None
 
 
@@ -61,7 +61,7 @@ def slml2img(filenames, options):
     f.write(text)
     f.close()
 
-    os.system("img2slml input.txt;rm input.txt")
+    os.system("slml2img input.txt;rm input.txt")
 
     return None
 
