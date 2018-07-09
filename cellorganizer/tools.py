@@ -101,7 +101,7 @@ def imshow(img_path, options):
         img = plt.imread(img_path)
         plt.imshow(img)
         plt.show()
-    else
+    else:
         print("Invalid file path.")
 
 #Private Methods
