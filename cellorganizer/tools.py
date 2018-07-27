@@ -14,9 +14,9 @@ def img2slml(dim, dna, cell, protein, options):
     
     text = "dimensionality = '" + dim +"';\n"
     f.write(text)
-
+    
     f.write("dnaImagesDirectoryPath = {")
-
+    text = ""
     for name in dna:
         text = text + "'" + name + "',"
 
@@ -26,7 +26,7 @@ def img2slml(dim, dna, cell, protein, options):
 
 
     f.write("cellImagesDirectoryPath = {")
-
+    text = ""
     for name in cell:
         text = text + "'" + name + "',"
 
@@ -34,7 +34,7 @@ def img2slml(dim, dna, cell, protein, options):
     text = text+"};\n"
     f.write(text)
 
-
+    text = ""
     f.write("proteinImagesDirectoryPath = {")
 
     for name in protein:
@@ -108,6 +108,8 @@ def imshow(img_path, options):
 #######################################################################
 #######################################################################
 def __options2txt(options,filename):
+    if os.path.exists(filename):
+        os.system('rm '+filename)
     f = open(filename,"w")
     keys = list(options.keys())
     keys.sort()
@@ -138,7 +140,10 @@ def __options2txt(options,filename):
             if len(options[key])<1:
                 text = 'options.'+key+' = [];\n'
             else:
-                text = 'options.'+key+' = ['
+                if key == "mask":
+                    text = 'options.'+key+' = {'
+                else:
+                    text = 'options.'+key+' = ['
                 for element in options[key]:
                     # if element in list is str
                     if isinstance(element,str):
@@ -149,7 +154,11 @@ def __options2txt(options,filename):
                     else:
                         text = text + str(element) + ","
                 text = text[:-1]
-                text = text+"];\n"
+                if key == "mask":
+                    text = text+"};\n"
+                else:
+                    text = text+"];\n"
+                
         elif isinstance(options[key],float):
             text = 'options.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
         else:
