@@ -140,7 +140,7 @@ def __options2txt(options,filename):
             if len(options[key])<1:
                 text = 'options.'+key+' = [];\n'
             else:
-                if key == "mask":
+                if key == "masks":
                     text = 'options.'+key+' = {'
                 else:
                     text = 'options.'+key+' = ['
@@ -154,7 +154,7 @@ def __options2txt(options,filename):
                     else:
                         text = text + str(element) + ","
                 text = text[:-1]
-                if key == "mask":
+                if key == "masks":
                     text = text+"};\n"
                 else:
                     text = text+"];\n"
