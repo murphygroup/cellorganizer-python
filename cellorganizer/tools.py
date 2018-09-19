@@ -83,7 +83,7 @@ def slml2slml(files, options):
     f.write('files = {}'.format(filenames))
     f.write('\n')
     for key in options:
-        f.write('{} = {}'.format(option, options[key]))
+        f.write('{} = {}'.format(options, options[key]))
         f.write('\n')
     f.close()
 
