@@ -74,20 +74,20 @@ def slml2info(filename):
 
 #######################################################################
 def slml2slml(files, options):
-    filenames = '{'
-    for filename in files:
-        filenames = filenames + '\'' + filename + '\'' + ',' 
-    filenames = filenames[:-1] +  '}'
-    
-    f = open('input.txt','w')
-    f.write('files = {}'.format(filenames))
-    f.write('\n')
-    for key in options:
-        f.write('{} = {}'.format(option, options[key]))
-        f.write('\n')
+    __options2txt(options,"input.txt")
+    f = open("input.txt","a")
+    f.write("files = {")
+    text = ""
+    for name in files:
+        text = text + "'" + name + "',"
+
+    text = text[:-1]
+    text = text+"};\n"
+    f.write(text)
     f.close()
 
-    os.system('slml2slml input.txt; rm input.txt')
+    os.system("slml2slml input.txt;rm input")
+
     return None
 #######################################################################
 def slml2report(model1_filename, model2_filename):
