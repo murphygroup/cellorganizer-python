@@ -3,6 +3,9 @@ import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
 from pathlib import Path
+import urllib.request
+
+_version = '2.8.0'
 
 # Public Methods
 ########################################################################
@@ -23,7 +26,6 @@ def img2slml(dim, dna, cell, protein, options):
     text = text[:-1]
     text = text+"};\n"
     f.write(text)
-
 
     f.write("cellImagesDirectoryPath = {")
     text = ""
@@ -47,7 +49,6 @@ def img2slml(dim, dna, cell, protein, options):
 
     os.system("img2slml input.txt;rm input.txt")   
     return None
-
 
 ########################################################################
 def slml2img(filenames, options):
@@ -103,6 +104,24 @@ def imshow(img_path, options):
         plt.show()
     else:
         print("Invalid file path.")
+
+def download_latest_notebooks():
+    url = 'http://www.cellorganizer.org/Downloads/v'+_version+'/docker/notebooks.txt'
+    print('Retrieving ' + url)
+    urllib.request.urlretrieve(url, 'notebooks.txt')
+    f = open('notebooks.txt','r')
+
+    while True:
+        line = f.readline()
+        if not line: 
+             break
+        else:
+            urllib.request.urlretrieve(line, 'curr_file.tgz')
+            os.system('tar -xvkf curr_file.tgz')                    
+            os.remove('curr_file.tgz')
+
+    if os.path.isfile('notebooks.txt'):
+        os.remove('notebooks.txt')
 
 #Private Methods
 #######################################################################
@@ -165,8 +184,6 @@ def __options2txt(options,filename):
             text = 'options.'+key+ ' = ' +str(options[key])+';\n'
         f.write(text)                                    
     f.close()
-
-
 
 # The input is shallow model dictionary
 def __shallowdict2mat(model):
@@ -276,5 +293,3 @@ def __mat2simplyDict(matfile):
     ans= {}
     printKeys(model,ans)
     return ans
-
-
