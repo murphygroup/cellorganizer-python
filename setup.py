@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='cellorganizer',
-      version='2.7.2',
+      version='2.8.0',
       description='',
       author='CellOrganizer Team',
       author_email='icaoberg@cmu.edu',
