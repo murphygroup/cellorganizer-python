@@ -2,9 +2,8 @@ import os
 import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
-#from pathlib import Path
-#import urllib.request
-import urllib
+from pathlib import Path
+import urllib.request
 
 _version = '2.8.0'
 
@@ -139,7 +138,7 @@ def get_image_collection():
         tarball = 'cellorganizer_full_image_collection.zip'
         url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
         zip_file = url+'/'+tarball
-        urllib.urlretrieve(zip_file, '2D_set.zip')
+        urllib.request.urlretrieve(zip_file, '2D_set.zip')
         os.system('mv 2D_set.zip /home/muprhylab/cellorganizer/images/')
         os.system('unzip /home/muprhylab/cellorganizer/images/2D_set.zip')                    
         os.remove('/home/muprhylab/cellorganizer/images/2D_set.zip')
