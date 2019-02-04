@@ -142,15 +142,17 @@ def get_image_collection():
         os.system('mv 2D_set.zip /home/muprhylab/cellorganizer/images/')
         os.system('unzip /home/muprhylab/cellorganizer/images/2D_set.zip')                    
         os.remove('/home/muprhylab/cellorganizer/images/2D_set.zip')
-    
-        #4D T cell dataset
-        tarball = 'LATFull.tgz'
-        url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
-        zip_file = url+'/'+tarball
-        urllib.request.urlretrieve(zip_file, '4D_set.tgz')
-        os.system('mv 4D_set.tgz /home/muprhylab/cellorganizer/images/')
-        os.system('tar -xvf 4D_set.tgz')
-        os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')                   
+        
+        
+        # #4D T cell dataset
+        # tarball = 'LATFull.tgz'
+        # url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
+        # zip_file = url+'/'+tarball
+        # urllib.request.urlretrieve(zip_file, '4D_set.tgz')
+        # os.system('mv 4D_set.tgz /home/muprhylab/cellorganizer/images/')
+        # os.system('tar -xvf 4D_set.tgz')
+        # os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')
+        
         
         f = open('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images',"a")
     else:
