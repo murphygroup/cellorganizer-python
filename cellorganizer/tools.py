@@ -133,7 +133,7 @@ def get_image_collection():
         * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
           expands to 2.6 GB)
     '''
-    if not os.path.isfile('.succesfully_downloaded_images'):
+    if not os.path.isfile('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images'):
         
         # 2D/3D HeLa dataset
         tarball = 'cellorganizer_full_image_collection.zip'
@@ -153,7 +153,7 @@ def get_image_collection():
         os.system('tar -xvf 4D_set.tgz')
         os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')                   
         
-        f = open('.succesfully_downloaded_images',"a")
+        f = open('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images',"a")
     else:
         print('Image collections already present. Skipping download.')
         
