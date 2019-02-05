@@ -21,6 +21,13 @@ def img2slml(dim, dna, cell, protein, options):
     3) a cell pattern model and,
     4) a protein pattern model.
     
+    List Of Input Arguments     Descriptions
+    -----------------------     ------------
+    dimensionality              2D/3D
+    dnaImagesDirectoryPath      DNA images collection directory
+    cellImagesDirectoryPath     Cell images collection directory
+    proteinImagesDirectoryPath  Protein images collection directory
+    options                     Options structure
     '''
     
     txtfilename = "input.txt"
@@ -64,6 +71,21 @@ def img2slml(dim, dna, cell, protein, options):
 
 ########################################################################
 def slml2img(filenames, options):
+    '''
+    Synthesizes an image from a list of SLML models.
+    
+    Instances may be saved in the following forms:
+    a) tiff stacks: a 3D tiff image stack for each pattern generated using the input models
+    b) indexed images: a single 3D tiff image stack where each pattern is represented by a number 1-n
+    c) object mesh: a .obj mesh file for each pattern generated using the input models (blenderfile option)
+    d) SBML-Spatial file: a Systems Biology Markup Language (SBML) instance XML file utilizing the Spatial extension in level 3 version 1
+    
+    List Of Input Arguments  Descriptions
+    -----------------------  ------------
+    models                   A cell array of filenames
+    options                  A structure holding the function options
+    
+    '''
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
     f.write("filenames = {")
@@ -82,11 +104,36 @@ def slml2img(filenames, options):
 
 #######################################################################
 def slml2info(filename):
+    '''
+    Generate a report from information extracted from a genearative model file
+    
+    List Of Input Arguments  Descriptions
+    -----------------------  ------------
+    filename                 Model filename
+    options                  Options structure
+    '''
+    
     os.system('slml2info {}'.format(filename))
     return None
 
 #######################################################################
 def slml2slml(files, options):
+    '''
+    SLML2SLML Combines multiple SLML files into a single model file.
+    
+    List Of Input Arguments     Descriptions
+    -----------------------     ------------
+    files                       list of paths of models need be combined
+    options                     Options structure
+    
+    The input argument options holds the valid parameters for these components.
+    The shape of options is described below
+    
+    List Of Parameters        Descriptions
+    ------------------        ------------
+    output_filename           (optional)the file name of output model,
+                               default is "model.mat"
+    '''
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
     f.write("files = {")
@@ -104,11 +151,31 @@ def slml2slml(files, options):
     return None
 #######################################################################
 def slml2report(model1_filename, model2_filename):
+    '''
+    Generate a report comparing two SLML generative models
+    
+    List Of Input Arguments  Descriptions
+    -----------------------  ------------
+    model1                   A generative model filename 
+    model2                   A generative model filename
+    
+    Example
+    > filename1 = '/path/to/model/model1.mat';
+    > filename2 = '/path/to/model/model2.mat';
+    answer = slml2report( filename1, filename2 );
+    '''
     os.system('slml2report {} {}'.format(model1_filename, model2_filename))
     return None
 
 #######################################################################
 def imshow(img_path, options):
+    '''
+    Show your output image in the notebook
+    
+    List Of Input Arguments  Descriptions
+    -----------------------  ------------
+    img_path                 filename of image
+    '''
     img_file = Path(img_path)
     if img_file.is_file():
         img = plt.imread(img_path)
