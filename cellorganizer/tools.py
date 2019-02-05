@@ -123,6 +123,42 @@ def download_latest_notebooks():
     if os.path.isfile('notebooks.txt'):
         os.remove('notebooks.txt')
 
+def get_image_collection():
+    ''' Helper function that downloads Murphy Lab's image collections used 
+    by CellOrganizer for model creation and demonstrations
+
+    The collections are
+        * 3D HeLa cells [2.4 GB]
+        * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
+          expands to 2.6 GB)
+    '''
+    if not os.path.isfile('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images'):
+        
+        # 2D/3D HeLa dataset
+        tarball = 'cellorganizer_full_image_collection.zip'
+        url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
+        zip_file = url+'/'+tarball
+        urllib.request.urlretrieve(zip_file, '2D_set.zip')
+        os.system('mv 2D_set.zip /home/muprhylab/cellorganizer/images/')
+        os.system('unzip /home/muprhylab/cellorganizer/images/2D_set.zip')                    
+        os.remove('/home/muprhylab/cellorganizer/images/2D_set.zip')
+        
+        
+        # #4D T cell dataset
+        # tarball = 'LATFull.tgz'
+        # url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
+        # zip_file = url+'/'+tarball
+        # urllib.request.urlretrieve(zip_file, '4D_set.tgz')
+        # os.system('mv 4D_set.tgz /home/muprhylab/cellorganizer/images/')
+        # os.system('tar -xvf 4D_set.tgz')
+        # os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')
+        
+        
+        f = open('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images',"a")
+    else:
+        print('Image collections already present. Skipping download.')
+        
+
 #Private Methods
 #######################################################################
 #######################################################################
