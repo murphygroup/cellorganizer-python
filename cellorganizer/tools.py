@@ -195,6 +195,7 @@ def download_latest_notebooks():
 
     while True:
         line = f.readline()
+        print('Retrieving' + line)
         if not line: 
              break
         else:
@@ -214,7 +215,7 @@ def get_image_collection():
         * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
           expands to 2.6 GB)
     '''
-    if not os.path.isfile('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images'):
+    if not os.path.isfile('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images'):
         
         # 2D/3D HeLa dataset
         tarball = 'cellorganizer_full_image_collection.zip'
@@ -222,9 +223,8 @@ def get_image_collection():
         zip_file = url+'/'+tarball
         urllib.request.urlretrieve(zip_file, '2D_set.zip')
         os.system('mv 2D_set.zip /home/murphylab/cellorganizer/images/')
-        os.system('unzip /home/murphylab/cellorganizer/images/2D_set.zip')                    
+        os.system('unzip -d /home/murphylab/cellorganizer/images/ /home/murphylab/cellorganizer/images/2D_set.zip ')
         os.remove('/home/murphylab/cellorganizer/images/2D_set.zip')
-        
         
         # #4D T cell dataset
         # tarball = 'LATFull.tgz'
@@ -236,7 +236,7 @@ def get_image_collection():
         # os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')
         
         
-        f = open('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images',"a")
+        f = open('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images',"a")
     else:
         print('Image collections already present. Skipping download.')
         
