@@ -11,6 +11,18 @@ _version = '2.8.0'
 ########################################################################
 ########################################################################
 def img2slml(dim, dna, cell, protein, options):
+    '''
+    Trains a generative model of protein subcellular location from a
+    collection of microscope images and saves the model as an SLML instance.
+    
+    An SLML model consists of four components,
+    1) a (optional) documentation component
+    2) a nuclear pattern model,
+    3) a cell pattern model and,
+    4) a protein pattern model.
+    
+    '''
+    
     txtfilename = "input.txt"
     __options2txt(options,txtfilename)
     f = open(txtfilename,"a")
@@ -106,6 +118,9 @@ def imshow(img_path, options):
         print("Invalid file path.")
 
 def download_latest_notebooks():
+    '''
+    Helper function that downloads the latest notebookds from the Murphy Lab's website. 
+    '''
     url = 'http://www.cellorganizer.org/Downloads/v'+_version+'/docker/notebooks.txt'
     print('Retrieving ' + url)
     urllib.request.urlretrieve(url, 'notebooks.txt')
@@ -139,9 +154,9 @@ def get_image_collection():
         url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
         zip_file = url+'/'+tarball
         urllib.request.urlretrieve(zip_file, '2D_set.zip')
-        os.system('mv 2D_set.zip images/')
-        os.system('unzip images/2D_set.zip')                    
-        os.remove('images/2D_set.zip')
+        os.system('mv 2D_set.zip /home/murphylab/cellorganizer/images/')
+        os.system('unzip /home/murphylab/cellorganizer/images/2D_set.zip')                    
+        os.remove('/home/murphylab/cellorganizer/images/2D_set.zip')
         
         
         # #4D T cell dataset
@@ -304,6 +319,10 @@ def __convert(model):
 		return model1
 
 def __getmodel(model):
+    '''
+    Sets path for loading cellorganizer
+    @param: model: a mat_struct defined by scipy.io.matlab
+    '''
     path=os.sep.join(cellorganizer.__file__.split(os.sep)[0:-1])+os.sep+"models"+os.sep+model
     # when you are importing cellorganizer in the distribution directory, the path will be the local path
     if path.index('cellorganizer')==0:
@@ -311,8 +330,11 @@ def __getmodel(model):
         path=path.split('cellorganizer'+os.sep)[1]
     return np.load(path).tolist()
 
-# This is the recursive function to create the dictionary
+
 def __printKeys(myDict, theDict, tempStr = ''):
+    '''
+    This is the recursive function to create the dictionary
+    '''
     keys = myDict.keys()
     for key in keys:
         if isinstance(myDict[key],dict):
@@ -323,8 +345,11 @@ def __printKeys(myDict, theDict, tempStr = ''):
             else:
                 theDict.update({tempStr+key:myDict[key]})
                 
-#  This are the functions to create the shallow dictionary.      
+      
 def __mat2simplyDict(matfile):
+    '''
+    This are the functions to create the shallow dictionary.
+    '''
     model = __mat2python(matfile,parameter=None)
     ans= {}
     printKeys(model,ans)
