@@ -7,20 +7,20 @@ import urllib.request
 
 _version = '2.8.0'
 
+################################################################################
 # Public Methods
-########################################################################
-########################################################################
+################################################################################
 def img2slml(dim, dna, cell, protein, options):
     '''
     Trains a generative model of protein subcellular location from a
     collection of microscope images and saves the model as an SLML instance.
-    
+
     An SLML model consists of four components,
     1) a (optional) documentation component
     2) a nuclear pattern model,
     3) a cell pattern model and,
     4) a protein pattern model.
-    
+
     List Of Input Arguments     Descriptions
     -----------------------     ------------
     dimensionality              2D/3D
@@ -29,14 +29,14 @@ def img2slml(dim, dna, cell, protein, options):
     proteinImagesDirectoryPath  Protein images collection directory
     options                     Options structure
     '''
-    
+
     txtfilename = "input.txt"
     __options2txt(options,txtfilename)
     f = open(txtfilename,"a")
-    
+
     text = "dimensionality = '" + dim +"';\n"
     f.write(text)
-    
+
     f.write("dnaImagesDirectoryPath = {")
     text = ""
     for name in dna:
@@ -66,25 +66,25 @@ def img2slml(dim, dna, cell, protein, options):
     f.write(text)
     f.close()
 
-    os.system("img2slml input.txt;rm input.txt")   
+    os.system("img2slml input.txt;rm input.txt")
     return None
 
-########################################################################
+################################################################################
 def slml2img(filenames, options):
     '''
     Synthesizes an image from a list of SLML models.
-    
+
     Instances may be saved in the following forms:
     a) tiff stacks: a 3D tiff image stack for each pattern generated using the input models
     b) indexed images: a single 3D tiff image stack where each pattern is represented by a number 1-n
     c) object mesh: a .obj mesh file for each pattern generated using the input models (blenderfile option)
     d) SBML-Spatial file: a Systems Biology Markup Language (SBML) instance XML file utilizing the Spatial extension in level 3 version 1
-    
+
     List Of Input Arguments  Descriptions
     -----------------------  ------------
     models                   A cell array of filenames
     options                  A structure holding the function options
-    
+
     '''
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
@@ -102,33 +102,33 @@ def slml2img(filenames, options):
 
     return None
 
-#######################################################################
+################################################################################
 def slml2info(filename):
     '''
     Generate a report from information extracted from a genearative model file
-    
+
     List Of Input Arguments  Descriptions
     -----------------------  ------------
     filename                 Model filename
     options                  Options structure
     '''
-    
+
     os.system('slml2info {}'.format(filename))
     return None
 
-#######################################################################
+################################################################################
 def slml2slml(files, options):
     '''
     SLML2SLML Combines multiple SLML files into a single model file.
-    
+
     List Of Input Arguments     Descriptions
     -----------------------     ------------
     files                       list of paths of models need be combined
     options                     Options structure
-    
+
     The input argument options holds the valid parameters for these components.
     The shape of options is described below
-    
+
     List Of Parameters        Descriptions
     ------------------        ------------
     output_filename           (optional)the file name of output model,
@@ -149,16 +149,17 @@ def slml2slml(files, options):
     os.system("slml2slml input.txt;rm input")
 
     return None
-#######################################################################
+
+################################################################################
 def slml2report(model1_filename, model2_filename):
     '''
     Generate a report comparing two SLML generative models
-    
+
     List Of Input Arguments  Descriptions
     -----------------------  ------------
-    model1                   A generative model filename 
+    model1                   A generative model filename
     model2                   A generative model filename
-    
+
     Example
     > filename1 = '/path/to/model/model1.mat';
     > filename2 = '/path/to/model/model2.mat';
@@ -171,7 +172,7 @@ def slml2report(model1_filename, model2_filename):
 def imshow(img_path, options):
     '''
     Show your output image in the notebook
-    
+
     List Of Input Arguments  Descriptions
     -----------------------  ------------
     img_path                 filename of image
@@ -184,9 +185,10 @@ def imshow(img_path, options):
     else:
         print("Invalid file path.")
 
+################################################################################
 def download_latest_notebooks():
     '''
-    Helper function that downloads the latest notebookds from the Murphy Lab's website. 
+    Helper function that downloads the latest notebookds from the Murphy Lab's website.
     '''
     url = 'http://www.cellorganizer.org/Downloads/v'+_version+'/docker/notebooks.txt'
     print('Retrieving ' + url)
@@ -195,18 +197,20 @@ def download_latest_notebooks():
 
     while True:
         line = f.readline()
-        if not line: 
+        if not line:
              break
         else:
             urllib.request.urlretrieve(line, 'curr_file.tgz')
-            os.system('tar -xvkf curr_file.tgz')                    
+            os.system('tar -xvkf curr_file.tgz')
             os.remove('curr_file.tgz')
 
     if os.path.isfile('notebooks.txt'):
         os.remove('notebooks.txt')
 
+################################################################################
 def get_image_collection():
-    ''' Helper function that downloads Murphy Lab's image collections used 
+    '''
+    Helper function that downloads Murphy Lab's image collections used
     by CellOrganizer for model creation and demonstrations
 
     The collections are
@@ -214,36 +218,44 @@ def get_image_collection():
         * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
           expands to 2.6 GB)
     '''
-    if not os.path.isfile('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images'):
-        
-        # 2D/3D HeLa dataset
-        tarball = 'cellorganizer_full_image_collection.zip'
-        url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
-        zip_file = url+'/'+tarball
-        urllib.request.urlretrieve(zip_file, '2D_set.zip')
-        os.system('mv 2D_set.zip /home/murphylab/cellorganizer/images/')
-        os.system('unzip /home/murphylab/cellorganizer/images/2D_set.zip')                    
-        os.remove('/home/murphylab/cellorganizer/images/2D_set.zip')
-        
-        
-        # #4D T cell dataset
-        # tarball = 'LATFull.tgz'
-        # url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
-        # zip_file = url+'/'+tarball
-        # urllib.request.urlretrieve(zip_file, '4D_set.tgz')
-        # os.system('mv 4D_set.tgz /home/muprhylab/cellorganizer/images/')
-        # os.system('tar -xvf 4D_set.tgz')
-        # os.system('mv ./LATFull ./LAT && rm -rf /home/muprhylab/cellorganizer/images/4D_set.tgz')
-        
-        
-        f = open('/home/muprhylab/cellorganizer/images/.succesfully_downloaded_images',"a")
+
+    if not os.path.isfile('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images'):
+        if not os.path.isfile('/home/murphylab/cellorganizer/images/.downloading_images'):
+            f = open( '/home/murphylab/cellorganizer/images/.downloading_images', 'a' )
+            f.close()
+
+            tarball = 'cellorganizer_full_image_collection.zip'
+            url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
+            zip_file = url + '/' + tarball
+            print( '2D/3D HeLa dataset from the Murphy Lab' )
+            urllib.request.urlretrieve( zip_file, '2D_set.zip' )
+            print( 'Moving files to new location' )
+            os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/images/' )
+            print( 'Unzipping file' )
+            os.system( 'unzip /home/murphylab/cellorganizer/images/2D_set.zip' )
+            print( 'Removing file' )
+            os.remove( '/home/murphylab/cellorganizer/images/2D_set.zip' )
+
+            # #4D T cell dataset
+            # tarball = 'LATFull.tgz'
+            # url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
+            # zip_file = url+'/'+tarball
+            # urllib.request.urlretrieve(zip_file, '4D_set.tgz')
+            # os.system('mv 4D_set.tgz /home/murphylab/cellorganizer/images/')
+            # os.system('tar -xvf 4D_set.tgz')
+            # os.system('mv ./LATFull ./LAT && rm -rf /home/murphylab/cellorganizer/images/4D_set.tgz')
+            os.remove('/home/murphylab/cellorganizer/images/.downloading_images')
+
+            f = open('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images','a')
+            f.close()
+        else:
+            print('Another process is downloading the images. Please wait...')
     else:
         print('Image collections already present. Skipping download.')
-        
 
+################################################################################
 #Private Methods
-#######################################################################
-#######################################################################
+################################################################################
 def __options2txt(options,filename):
     if os.path.exists(filename):
         os.system('rm '+filename)
@@ -260,7 +272,7 @@ def __options2txt(options,filename):
             # if value is list or matrix
             elif options[key] == 'date':
                 text = 'options.'+key+' = '+ options[key]+";\n"
-            elif '[' in options[key]: 
+            elif '[' in options[key]:
                 text = 'options.'+key+' = '+ options[key]+";\n"
             # if value is a function
             elif '(' in options[key]:
@@ -270,7 +282,7 @@ def __options2txt(options,filename):
         elif isinstance(options[key],bool):
             if options[key]:
                 text = 'options.'+key+' = '+ 'true;\n'
-            else:      
+            else:
                 text = 'options.'+key+' = '+ 'false;\n'
         # if value is list
         elif isinstance(options[key],list):
@@ -284,10 +296,10 @@ def __options2txt(options,filename):
                 for element in options[key]:
                     # if element in list is str
                     if isinstance(element,str):
-                        text = text + "'" + element + "',"   
+                        text = text + "'" + element + "',"
             # if element in list is float, keep three decimal places
                     elif isinstance(element,float):
-                        text = text + str('%.3f' % element) + "," 
+                        text = text + str('%.3f' % element) + ","
                     else:
                         text = text + str(element) + ","
                 text = text[:-1]
@@ -295,14 +307,15 @@ def __options2txt(options,filename):
                     text = text+"};\n"
                 else:
                     text = text+"];\n"
-                
+
         elif isinstance(options[key],float):
             text = 'options.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
         else:
             text = 'options.'+key+ ' = ' +str(options[key])+';\n'
-        f.write(text)                                    
+        f.write(text)
     f.close()
 
+################################################################################
 # The input is shallow model dictionary
 def __shallowdict2mat(model):
     tem_dic = {}
@@ -316,16 +329,16 @@ def __shallowdict2mat(model):
                     point = point[Key_list[i]]
                 else:
                     point[Key_list[i]] = {}
-                    point = point[Key_list[i]] 
-            
+                    point = point[Key_list[i]]
+
             point[Key_list[len(Key_list)-1]] = value
         else:
             tem_dic.update({key:value})
 
     scipy.io.savemat('test.mat', mdict={'model': tem_dic})
     return tem_dic
-    
 
+################################################################################
 def __mat2numpy(matfile,savefile,parameter=None):
 	'''
 	mat2numpy reads a .mat file which contains a struct representing a model and save it as a numpy file
@@ -346,6 +359,7 @@ def __mat2numpy(matfile,savefile,parameter=None):
 		print("__mat2numpy:Can't save the numpy file")
 		return False
 
+################################################################################
 def __mat2python(matfile,parameter=None):
 	'''
 	__mat2python reads a .mat file which contains a struct representing a model and returns a dictionary corresponding to the matlab struct
@@ -369,6 +383,7 @@ def __mat2python(matfile,parameter=None):
 		if "__" not in key:
 			return __convert(model[key])
 
+################################################################################
 def __convert(model):
 	'''
 	__convert is a helper method that recursively turns a  mat_struct to dictionary
@@ -385,6 +400,7 @@ def __convert(model):
 			model1[key]=__convert(model1[key])
 		return model1
 
+################################################################################
 def __getmodel(model):
     '''
     Sets path for loading cellorganizer
@@ -397,7 +413,7 @@ def __getmodel(model):
         path=path.split('cellorganizer'+os.sep)[1]
     return np.load(path).tolist()
 
-
+################################################################################
 def __printKeys(myDict, theDict, tempStr = ''):
     '''
     This is the recursive function to create the dictionary
@@ -411,8 +427,8 @@ def __printKeys(myDict, theDict, tempStr = ''):
                 theDict.update({key:myDict[key]})
             else:
                 theDict.update({tempStr+key:myDict[key]})
-                
-      
+
+################################################################################
 def __mat2simplyDict(matfile):
     '''
     This are the functions to create the shallow dictionary.
