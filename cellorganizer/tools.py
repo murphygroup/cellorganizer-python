@@ -139,9 +139,9 @@ def get_image_collection():
         url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
         zip_file = url+'/'+tarball
         urllib.request.urlretrieve(zip_file, '2D_set.zip')
-        os.system('mv 2D_set.zip /home/muprhylab/cellorganizer/images/')
-        os.system('unzip /home/muprhylab/cellorganizer/images/2D_set.zip')                    
-        os.remove('/home/muprhylab/cellorganizer/images/2D_set.zip')
+        os.system('mv 2D_set.zip images/')
+        os.system('unzip images/2D_set.zip')                    
+        os.remove('images/2D_set.zip')
         
         
         # #4D T cell dataset
