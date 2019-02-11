@@ -218,7 +218,7 @@ def get_image_collection():
         * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
           expands to 2.6 GB)
     '''
-
+    
     if not os.path.isfile('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images'):
         if not os.path.isfile('/home/murphylab/cellorganizer/images/.downloading_images'):
             f = open( '/home/murphylab/cellorganizer/images/.downloading_images', 'a' )
