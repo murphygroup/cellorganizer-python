@@ -232,7 +232,7 @@ def get_image_collection():
             print( 'Moving files to new location' )
             os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/images/' )
             print( 'Unzipping file' )
-            os.system( 'unzip /home/murphylab/cellorganizer/images/2D_set.zip' )
+            os.system( 'unzip /home/murphylab/cellorganizer/images/2D_set.zip -d /home/murphylab/cellorganizer/images/' )
             print( 'Removing file' )
             os.remove( '/home/murphylab/cellorganizer/images/2D_set.zip' )
 
