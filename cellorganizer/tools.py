@@ -103,7 +103,7 @@ def slml2img(filenames, options):
     return None
 
 ################################################################################
-def slml2info(filename, options):
+def slml2info(filenames, options):
     '''
     Generate a report from information extracted from a genearative model file
 
