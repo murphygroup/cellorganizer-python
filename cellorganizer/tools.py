@@ -103,7 +103,7 @@ def slml2img(filenames, options):
     return None
 
 ################################################################################
-def slml2info(filename):
+def slml2info(filenames, options):
     '''
     Generate a report from information extracted from a genearative model file
 
@@ -112,8 +112,20 @@ def slml2info(filename):
     filename                 Model filename
     options                  Options structure
     '''
+    txtfilename = 'input.txt'
+    __options2txt(options,"input.txt")
+    f = open("input.txt","a")
+    f.write("files = {")
+    text = ""
+    for name in filenames:
+        text = text + "'" + name + "',"
 
-    os.system('slml2info {}'.format(filename))
+    text = text[:-1]
+    text = text+"};\n"
+    f.write(text)
+    f.close()
+
+    os.system('slml2info input.txt; rm input.txt')
     return None
 
 ################################################################################
@@ -218,7 +230,7 @@ def get_image_collection():
         * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
           expands to 2.6 GB)
     '''
-    
+
     if not os.path.isfile('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images'):
         if not os.path.isfile('/home/murphylab/cellorganizer/images/.downloading_images'):
             f = open( '/home/murphylab/cellorganizer/images/.downloading_images', 'a' )
