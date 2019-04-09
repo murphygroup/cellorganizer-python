@@ -1,6 +1,6 @@
 # docker-python
 
-The docker-python project strives to be a Python 3 package to manage the binaries used in Docker for CellOrganizer.
+The docker-python project strives to be a Python 3 package to manage the binaries used [CellOrganizer for Docker](https://github.com/murphygroup/docker-cellorganizer-jupyter-notebook).
 
 ## Contributing
 
