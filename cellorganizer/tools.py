@@ -265,6 +265,36 @@ def get_image_collection():
     else:
         print('Image collections already present. Skipping download.')
 
+def tiff2ometiff( <string> pattern, <string> rois, <struct> metadata, <struct> key_value, <string> filename):
+    txtfilename = 'input.txt'
+    if os.path.exists(txtfilename):
+        os.system('rm '+txtfilename)
+
+    __metadata2txt(metadata, txtfilename)
+
+    f = open(txtfilename,"a")
+    f.write("pattern = ")
+    write_pattern = pattern + ";\n"
+    f.write(write_pattern)
+    f.write("rois = ")
+    write_rois = rois + ";\n"
+    f.write(rois)
+
+
+
+    f.write("files = {")
+    text = ""
+    for name in filenames:
+        text = text + "'" + name + "',"
+
+    text = text[:-1]
+    text = text+"};\n"
+    f.write(text)
+    f.close()
+
+    os.system('slml2info input.txt; rm input.txt')
+    return None
+
 ################################################################################
 #Private Methods
 ################################################################################
@@ -326,6 +356,65 @@ def __options2txt(options,filename):
             text = 'options.'+key+ ' = ' +str(options[key])+';\n'
         f.write(text)
     f.close()
+
+################################################################################
+def __metadata2txt(options,filename):
+    f = open(filename,"w")
+    keys = list(options.keys())
+    keys.sort()
+    for key in keys:
+        if isinstance(options[key],str):
+            if 'pwd' in options[key]:
+                if options[key] == 'pwd':
+                    text = 'metadata.'+key+' = '+ options[key]+";\n"
+                else:
+                    text =  'metadata.'+key+' = '+"["+ options[key]+"];\n"
+            # if value is list or matrix
+            elif options[key] == 'date':
+                text = 'metadata.'+key+' = '+ options[key]+";\n"
+            elif '[' in options[key]:
+                text = 'metadata.'+key+' = '+ options[key]+";\n"
+            # if value is a function
+            elif '(' in options[key]:
+                text = 'metadata.'+key+' = '+ options[key]+";\n"
+            else:
+                text = 'metadata.'+key+' = '+ "'"+options[key]+"';\n"
+        elif isinstance(options[key],bool):
+            if options[key]:
+                text = 'metadata.'+key+' = '+ 'true;\n'
+            else:
+                text = 'metadata.'+key+' = '+ 'false;\n'
+        # if value is list
+        elif isinstance(options[key],list):
+            if len(options[key])<1:
+                text = 'metadata.'+key+' = [];\n'
+            else:
+                if key == "masks":
+                    text = 'metadata.'+key+' = {'
+                else:
+                    text = 'metadata.'+key+' = ['
+                for element in options[key]:
+                    # if element in list is str
+                    if isinstance(element,str):
+                        text = text + "'" + element + "',"
+            # if element in list is float, keep three decimal places
+                    elif isinstance(element,float):
+                        text = text + str('%.3f' % element) + ","
+                    else:
+                        text = text + str(element) + ","
+                text = text[:-1]
+                if key == "masks":
+                    text = text+"};\n"
+                else:
+                    text = text+"];\n"
+
+        elif isinstance(options[key],float):
+            text = 'metadata.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
+        else:
+            text = 'metadata.'+key+ ' = ' +str(options[key])+';\n'
+        f.write(text)
+    f.close()
+
 
 ################################################################################
 # The input is shallow model dictionary
