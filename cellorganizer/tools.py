@@ -3,7 +3,7 @@ import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
 from pathlib import Path
-import urllib.request
+import urllib
 
 _version = '2.8.0'
 
@@ -265,7 +265,7 @@ def get_image_collection():
     else:
         print('Image collections already present. Skipping download.')
 
-def tiff2ometiff( <string> pattern, <string> rois, <struct> metadata, <struct> key_value, <string> filename):
+def tiff2ometiff( pattern, rois, metadata, key_value, filename):
     txtfilename = 'input.txt'
     if os.path.exists(txtfilename):
         os.system('rm '+txtfilename)
@@ -273,23 +273,30 @@ def tiff2ometiff( <string> pattern, <string> rois, <struct> metadata, <struct> k
     __metadata2txt(metadata, txtfilename)
 
     f = open(txtfilename,"a")
-    f.write("pattern = ")
-    write_pattern = pattern + ";\n"
+    f.write("pattern = '")
+    write_pattern = pattern + "';\n"
     f.write(write_pattern)
-    f.write("rois = ")
-    write_rois = rois + ";\n"
+
+    f.write("rois = {'")
+    write_rois = ''
+    for roi in rois:
+        write_rois = write_rois+str(roi)
     f.write(write_rois)
+    f.write("'};\n")
 
 
 
-    f.write("files = {")
-    text = ""
-    for name in filenames:
-        text = text + "'" + name + "',"
-
-    text = text[:-1]
-    text = text+"};\n"
-    f.write(text)
+    f.write("filename = '")
+    f.write(filename)
+    f.write("';\n")
+    f.write("key_value = [];\n")
+    # text = ""
+    # for name in filenames:
+    #     text = text + "'" + name + "',"
+    #
+    # text = text[:-1]
+    # text = text+"};\n"
+    # f.write(text)
     f.close()
 
     os.system('tiff2ometiff input.txt;')
@@ -389,10 +396,7 @@ def __metadata2txt(options,filename):
             if len(options[key])<1:
                 text = 'metadata.'+key+' = [];\n'
             else:
-                if key == "masks":
-                    text = 'metadata.'+key+' = {'
-                else:
-                    text = 'metadata.'+key+' = ['
+                text = 'metadata.'+key+' = {'
                 for element in options[key]:
                     # if element in list is str
                     if isinstance(element,str):
@@ -403,10 +407,7 @@ def __metadata2txt(options,filename):
                     else:
                         text = text + str(element) + ","
                 text = text[:-1]
-                if key == "masks":
-                    text = text+"};\n"
-                else:
-                    text = text+"];\n"
+                text = text+"};\n"
 
         elif isinstance(options[key],float):
             text = 'metadata.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
