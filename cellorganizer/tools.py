@@ -278,7 +278,7 @@ def tiff2ometiff( <string> pattern, <string> rois, <struct> metadata, <struct> k
     f.write(write_pattern)
     f.write("rois = ")
     write_rois = rois + ";\n"
-    f.write(rois)
+    f.write(write_rois)
 
 
 
@@ -292,7 +292,7 @@ def tiff2ometiff( <string> pattern, <string> rois, <struct> metadata, <struct> k
     f.write(text)
     f.close()
 
-    os.system('slml2info input.txt; rm input.txt')
+    os.system('tiff2ometiff input.txt;')
     return None
 
 ################################################################################
