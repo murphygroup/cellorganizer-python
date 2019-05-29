@@ -1,6 +1,6 @@
 # cellorganizer-python
 
-The cellorganizer-python project strives to be a Python 3 package to manage the binaries used [CellOrganizer for Docker](https://github.com/murphygroup/docker-cellorganizer-jupyter-notebook).
+The cellorganizer-python project strives to be a Python 3 package to manage the binaries used in [CellOrganizer for Docker](https://github.com/murphygroup/docker-cellorganizer-jupyter-notebook) and CellOrganizer for Singularity.
 
 ## Contributing
 
