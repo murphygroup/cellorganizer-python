@@ -3,7 +3,7 @@ import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
 from pathlib import Path
-import urllib.request
+# import urllib.request
 
 _version = '2.8.0'
 
@@ -288,6 +288,8 @@ def __options2txt(options,filename):
                 text = 'options.'+key+' = '+ options[key]+";\n"
             # if value is a function
             elif '(' in options[key]:
+                text = 'options.'+key+' = '+ options[key]+";\n"
+            elif '{' in options[key]:
                 text = 'options.'+key+' = '+ options[key]+";\n"
             else:
                 text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
