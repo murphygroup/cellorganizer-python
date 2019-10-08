@@ -289,6 +289,8 @@ def __options2txt(options,filename):
             # if value is a function
             elif '(' in options[key]:
                 text = 'options.'+key+' = '+ options[key]+";\n"
+            elif '{' in options[key]:
+                text = 'options.'+key+' = '+ options[key]+";\n"
             else:
                 text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
         elif isinstance(options[key],bool):
