@@ -178,6 +178,10 @@ def slml2report(model1_filename, model2_filename):
     answer = slml2report( filename1, filename2 );
     '''
     os.system('slml2report {} {}'.format(model1_filename, model2_filename))
+    # need to copy everything out of report folder to current working directory
+    os.system('mv ./report/* .')
+    os.system('rm -r report/')
+
     return None
 
 #######################################################################
