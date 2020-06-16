@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import urllib.request
 
-_version = '2.8.0'
-
 ################################################################################
 # Public Methods
 ################################################################################
@@ -206,7 +204,7 @@ def download_latest_notebooks():
     '''
     Helper function that downloads the latest notebookds from the Murphy Lab's website.
     '''
-    url = 'http://www.cellorganizer.org/Downloads/v'+_version+'/docker/notebooks.txt'
+    url = 'http://www.cellorganizer.org/Downloads/latest/docker/notebooks.txt'
     print('Retrieving ' + url)
     urllib.request.urlretrieve(url, 'notebooks.txt')
     f = open('notebooks.txt','r')
