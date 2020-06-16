@@ -2,6 +2,26 @@
 
 The cellorganizer-python project strives to be a Python 3 package to manage the binaries used in [CellOrganizer for Docker](https://github.com/murphygroup/docker-cellorganizer-jupyter-notebook) and CellOrganizer for Singularity.
 
+Supported methods are
+
+* `img2slml(dim, dna, cell, protein, options)`
+* `slml2img(filenames, options)`
+* `slml2info(filenames, options)`
+* `slml2slml(files, options)`
+* `slml2report(model1_filename, model2_filename)`
+* `imshow(img_path, options)`
+* `download_latest_notebooks()`
+* `get_image_collection()`
+* `get(filename, feature)`
+* `ometiff2array(filename)`
+* `ometiff2projection(filename, options={})`
+* `tiff2ometiff(input_filename, output_filename, options={})`
+* `img2ometiff(arr_img, filename, options={})`
+* `xmlvalid(filename)`
+* `tiffcomment(filename)`
+* `xmlindent(filename)`
+* `showinf(filename, **kwargs)`
+
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, [email](mailto:cellorganizer-dev@compbio.cmu.edu), or any other method with the owners of this repository before making a change.
