@@ -16,6 +16,10 @@ def img2shapespace( dna, cell, options ):
     __options2txt(options,txtfilename)
     f = open(txtfilename,"a")
 
+    #soham check that if
+    # dna = [] or None
+    # it gets written to disk as
+    # dnaImageDirectoryPath = {};
     f.write("dnaImagesDirectoryPath = {")
     text = ""
     for name in dna:
@@ -25,6 +29,7 @@ def img2shapespace( dna, cell, options ):
     text = text+"};\n"
     f.write(text)
 
+    #soham do the same thing for cell
     f.write("cellImagesDirectoryPath = {")
     text = ""
     for name in cell:
