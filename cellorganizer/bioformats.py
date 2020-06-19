@@ -59,7 +59,6 @@ def tiffcomment(filename):
         return False
 
     # Execute and return the string with the comments
-
     comment = os.popen('tiffcomment '+filename).read()
     return comment
 
