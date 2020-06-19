@@ -209,13 +209,15 @@ def download_latest_notebooks():
     urllib.request.urlretrieve(url, 'notebooks.txt')
     f = open('notebooks.txt','r')
 
+    print('Downloading list of files')
     while True:
         line = f.readline()
         if not line:
              break
         else:
+            print('Retrieving new notebooks')
             urllib.request.urlretrieve(line, 'curr_file.tgz')
-            os.system('tar -xvkf curr_file.tgz')
+            os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf curr_file.tgz')
             os.remove('curr_file.tgz')
 
     if os.path.isfile('notebooks.txt'):
@@ -233,9 +235,13 @@ def get_image_collection():
           expands to 2.6 GB)
     '''
 
-    if not os.path.isfile('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images'):
-        if not os.path.isfile('/home/murphylab/cellorganizer/images/.downloading_images'):
-            f = open( '/home/murphylab/cellorganizer/images/.downloading_images', 'a' )
+    if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images'):
+        if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.downloading_images'):
+            if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
+                print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
+                os.mkdir('/home/murphylab/cellorganizer/local/images/')
+
+            f = open( '/home/murphylab/cellorganizer/local/images/.downloading_images', 'a' )
             f.close()
 
             tarball = 'cellorganizer_full_image_collection.zip'
@@ -244,11 +250,11 @@ def get_image_collection():
             print( '2D/3D HeLa dataset from the Murphy Lab' )
             urllib.request.urlretrieve( zip_file, '2D_set.zip' )
             print( 'Moving files to new location' )
-            os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/images/' )
+            os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/local/images/' )
             print( 'Unzipping file' )
-            os.system( 'unzip /home/murphylab/cellorganizer/images/2D_set.zip -d /home/murphylab/cellorganizer/images/' )
+            os.system( 'unzip /home/murphylab/cellorganizer/local/images/2D_set.zip -d /home/murphylab/cellorganizer/local/images/' )
             print( 'Removing file' )
-            os.remove( '/home/murphylab/cellorganizer/images/2D_set.zip' )
+            os.remove( '/home/murphylab/cellorganizer/local/images/2D_set.zip' )
 
             # #4D T cell dataset
             # tarball = 'LATFull.tgz'
@@ -258,14 +264,32 @@ def get_image_collection():
             # os.system('mv 4D_set.tgz /home/murphylab/cellorganizer/images/')
             # os.system('tar -xvf 4D_set.tgz')
             # os.system('mv ./LATFull ./LAT && rm -rf /home/murphylab/cellorganizer/images/4D_set.tgz')
-            os.remove('/home/murphylab/cellorganizer/images/.downloading_images')
+            os.remove('/home/murphylab/cellorganizer/local/images/.downloading_images')
 
-            f = open('/home/murphylab/cellorganizer/images/.succesfully_downloaded_images','a')
+            f = open('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images','a')
             f.close()
         else:
             print('Another process is downloading the images. Please wait...')
     else:
         print('Image collections already present. Skipping download.')
+
+################################################################################
+def load( matfile ):
+    '''
+    Loads a Matlab file into the workspace as a dictionary
+    '''
+
+    model=__mat2python(matfile)
+    return model
+
+################################################################################
+def save( model, filename="model.mat" ):
+    '''
+    Saves model into a Matlab mat-file.
+    '''
+
+    answer = __shallowdict2mat(model, filename)
+    return answer
 
 ################################################################################
 #Private Methods
@@ -313,7 +337,7 @@ def __options2txt(options,filename):
                     # if element in list is str
                     if isinstance(element,str):
                         text = text + "'" + element + "',"
-            # if element in list is float, keep three decimal places
+                    # if element in list is float, keep three decimal places
                     elif isinstance(element,float):
                         text = text + str('%.3f' % element) + ","
                     else:
@@ -333,7 +357,7 @@ def __options2txt(options,filename):
 
 ################################################################################
 # The input is shallow model dictionary
-def __shallowdict2mat(model):
+def __shallowdict2mat(model, filename="model.mat"):
     tem_dic = {}
     #put each element into the fixed dictionary
     for key,value in model.items():
@@ -351,8 +375,8 @@ def __shallowdict2mat(model):
         else:
             tem_dic.update({key:value})
 
-    scipy.io.savemat('test.mat', mdict={'model': tem_dic})
-    return tem_dic
+    scipy.io.savemat(filename, mdict={'model': tem_dic})
+    return True
 
 ################################################################################
 def __mat2numpy(matfile,savefile,parameter=None):
