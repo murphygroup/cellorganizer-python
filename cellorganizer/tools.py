@@ -163,7 +163,7 @@ def slml2slml(files, options):
     return None
 
 ################################################################################
-def slml2report(model1_filename, model2_filename):
+def slml2report(model1_filename, model2_filename, options):
     '''
     Generate a report comparing two SLML generative models
 
@@ -173,11 +173,21 @@ def slml2report(model1_filename, model2_filename):
     model2                   A generative model filename
 
     Example
-    > filename1 = '/path/to/model/model1.mat';
-    > filename2 = '/path/to/model/model2.mat';
-    answer = slml2report( filename1, filename2 );
+    > model1_filename = '/path/to/model/model1.mat';
+    > model2_filename = '/path/to/model/model2.mat';
+    > options
+    answer = slml2report( filename1, filename2, options );
     '''
-    os.system('slml2report {} {}'.format(model1_filename, model2_filename))
+
+     txtfilename = "input.txt"
+    __options2txt(options,txtfilename)
+    
+    f = open(txtfilename,"a")
+    f.write("model1_filename =" + model1_filename + "\n")
+    f.write("model1_filename =" + model2_filename + "\n")
+   
+    os.system("slml2report input.txt;rm input")
+    
     # need to copy everything out of report folder to current working directory
     os.system('mv ./report/* .')
     os.system('rm -r report/')
