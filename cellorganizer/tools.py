@@ -66,7 +66,7 @@ def img2slml(dim, dna, cell, protein, options):
 
     os.system("img2slml input.txt;rm input.txt")
     # checking if the model file is generated
-    answer  = os.path.isfile("./model.mat")
+    answer  = os.path.isfile(options['output_filename'])
     return answer
 
 ################################################################################
