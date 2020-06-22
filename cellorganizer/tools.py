@@ -55,7 +55,6 @@ def img2slml(dim, dna, cell, protein, options):
 
     text = ""
     f.write("proteinImagesDirectoryPath = {")
-
     for name in protein:
         text = text + "'" + name + "',"
 
@@ -66,7 +65,7 @@ def img2slml(dim, dna, cell, protein, options):
 
     os.system("img2slml input.txt;rm input.txt")
     # checking if the model file is generated
-    answer  = os.path.isfile(options['output_filename'])
+    answer  = os.path.isfile(options['model.filename'])
     return answer
 
 ################################################################################
