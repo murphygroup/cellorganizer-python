@@ -179,15 +179,15 @@ def slml2report(model1_filename, model2_filename, options):
     answer = slml2report( filename1, filename2, options );
     '''
 
-     txtfilename = "input.txt"
+    txtfilename = "input.txt"
     __options2txt(options,txtfilename)
-    
+
     f = open(txtfilename,"a")
     f.write("model1_filename =" + model1_filename + "\n")
     f.write("model1_filename =" + model2_filename + "\n")
-   
+
     os.system("slml2report input.txt;rm input")
-    
+
     # need to copy everything out of report folder to current working directory
     os.system('mv ./report/* .')
     os.system('rm -r report/')
