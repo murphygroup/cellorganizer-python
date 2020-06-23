@@ -161,7 +161,7 @@ def slml2slml(files, options):
     f.write(text)
     f.close()
 
-    os.system("slml2slml input.txt;rm input.txt")
+    os.system("slml2slml input.txt;rm input")
 
     return None
 
@@ -186,19 +186,15 @@ def slml2report(model1_filename, model2_filename, options):
     __options2txt(options,txtfilename)
 
     f = open(txtfilename,"a")
-    f.write("model1_filename =" + "'" + model1_filename + "';\n")
-    f.write("model2_filename =" + "'" + model2_filename + "';\n")
-    f.close()
+    f.write("model1_filename =" + model1_filename + "\n")
+    f.write("model1_filename =" + model2_filename + "\n")
 
-    os.system("slml2report input.txt;rm input.txt")
+    os.system("slml2report input.txt;rm input")
 
     # need to copy everything out of report folder to current working directory
-    if os.path.exists('report'):
-        os.system('mv ./report/* .')
-        os.system('rm -rf ./report')
-        return True
-    else:
-        return False
+    os.system('mv ./report/* .')
+    os.system('rm -r report/')
+    return None
 
 #######################################################################
 def imshow(img_path, options):
@@ -218,78 +214,98 @@ def imshow(img_path, options):
         print("Invalid file path.")
 
 ################################################################################
+def get_model_files():
+    '''
+    Helper function that downloads models from the Murphy Lab's website.
+    '''
+    url = 'http://www.cellorganizer.org/Downloads/latest/docker/models.tgz'
+    print('Retrieving ' + url)
+    if __does_file_exist(url):
+        if not os.path.exists('/home/murphylab/cellorganizer/local/models/'):
+            print( 'Creating directorry /home/murphylab/cellorganizer/local/models/' )
+            os.mkdir('/home/murphylab/cellorganizer/local/models/')
+
+        urllib.request.urlretrieve( url, 'models.tgz' )
+        print( 'Extracting models' )
+        os.system( 'tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz' )
+        os.system( 'rm -fv models.tgz' )
+
+        return True
+    else:
+        print('Unable to find file. Check later.')
+        return False
+
+################################################################################
 def download_latest_notebooks():
     '''
     Helper function that downloads the latest notebookds from the Murphy Lab's website.
     '''
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/notebooks.txt'
     print('Retrieving ' + url)
-    urllib.request.urlretrieve(url, 'notebooks.txt')
-    f = open('notebooks.txt','r')
+    if __does_file_exist(url):
+        urllib.request.urlretrieve(url, 'notebooks.txt')
+        f = open('notebooks.txt','r')
 
-    print('Downloading list of files')
-    while True:
-        line = f.readline()
-        if not line:
-             break
-        else:
-            print('Retrieving new notebooks')
-            urllib.request.urlretrieve(line, 'curr_file.tgz')
-            os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf curr_file.tgz')
-            os.remove('curr_file.tgz')
+        print('Downloading list of files')
+        while True:
+            line = f.readline()
+            if not line:
+                 break
+            else:
+                print('Retrieving new notebooks')
+                urllib.request.urlretrieve(line, 'curr_file.tgz')
+                os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf curr_file.tgz')
+                os.remove('curr_file.tgz')
 
-    if os.path.isfile('notebooks.txt'):
-        os.remove('notebooks.txt')
+        if os.path.isfile('notebooks.txt'):
+            os.remove('notebooks.txt')
+
+        return True
+    else:
+        print('Unable to find file. Check later.')
+        return False
 
 ################################################################################
 def get_image_collection():
     '''
     Helper function that downloads Murphy Lab's image collections used
     by CellOrganizer for model creation and demonstrations
-
-    The collections are
-        * 3D HeLa cells [2.4 GB]
-        * 3D movies of T cells expressing LAT (the zip file is 1.2 GB but it
-          expands to 2.6 GB)
     '''
 
-    if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images'):
-        if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.downloading_images'):
-            if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
-                print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
-                os.mkdir('/home/murphylab/cellorganizer/local/images/')
+    url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
+    if __does_file_exist(url):
+        if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images'):
+            if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.downloading_images'):
+                if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
+                    print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
+                    os.mkdir('/home/murphylab/cellorganizer/local/images/')
 
-            f = open( '/home/murphylab/cellorganizer/local/images/.downloading_images', 'a' )
-            f.close()
+                f = open( '/home/murphylab/cellorganizer/local/images/.downloading_images', 'a' )
+                f.close()
 
-            tarball = 'cellorganizer_full_image_collection.zip'
-            url = 'http://murphylab.web.cmu.edu/data/Hela/3D/multitiff'
-            zip_file = url + '/' + tarball
-            print( '2D/3D HeLa dataset from the Murphy Lab' )
-            urllib.request.urlretrieve( zip_file, '2D_set.zip' )
-            print( 'Moving files to new location' )
-            os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/local/images/' )
-            print( 'Unzipping file' )
-            os.system( 'unzip /home/murphylab/cellorganizer/local/images/2D_set.zip -d /home/murphylab/cellorganizer/local/images/' )
-            print( 'Removing file' )
-            os.remove( '/home/murphylab/cellorganizer/local/images/2D_set.zip' )
+                zip_file = url + '/' + tarball
+                print( '2D/3D HeLa dataset from the Murphy Lab' )
+                urllib.request.urlretrieve( zip_file, '2D_set.zip' )
+                print( 'Moving files to new location' )
+                os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/local/images/' )
+                print( 'Unzipping file' )
+                os.system( 'unzip /home/murphylab/cellorganizer/local/images/2D_set.zip -d /home/murphylab/cellorganizer/local/images/' )
+                print( 'Removing file' )
+                os.remove( '/home/murphylab/cellorganizer/local/images/2D_set.zip' )
+                os.remove('/home/murphylab/cellorganizer/local/images/.downloading_images')
 
-            # #4D T cell dataset
-            # tarball = 'LATFull.tgz'
-            # url = 'http://murphylab.web.cmu.edu/data/TcellModels/'
-            # zip_file = url+'/'+tarball
-            # urllib.request.urlretrieve(zip_file, '4D_set.tgz')
-            # os.system('mv 4D_set.tgz /home/murphylab/cellorganizer/images/')
-            # os.system('tar -xvf 4D_set.tgz')
-            # os.system('mv ./LATFull ./LAT && rm -rf /home/murphylab/cellorganizer/images/4D_set.tgz')
-            os.remove('/home/murphylab/cellorganizer/local/images/.downloading_images')
-
-            f = open('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images','a')
-            f.close()
+                f = open('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images','a')
+                f.close()
+                return True
+            else:
+                print('Another process is downloading the images. Please wait...')
+                return False
         else:
-            print('Another process is downloading the images. Please wait...')
+            print('Image collections already present. Skipping download.')
+            return False
     else:
-        print('Image collections already present. Skipping download.')
+        print('Unable to find file. Check later.')
+        return False
 
 ################################################################################
 def load( matfile ):
@@ -495,3 +511,16 @@ def __mat2simplyDict(matfile):
     ans= {}
     printKeys(model,ans)
     return ans
+
+################################################################################
+def __does_file_exist(url):
+    '''
+    Helper function that checks if file exists on disk
+    '''
+
+    try:
+        response =urllib.request.urlopen(url)
+    except:
+        return False
+
+    return True
