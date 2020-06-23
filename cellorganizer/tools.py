@@ -188,6 +188,7 @@ def slml2report(model1_filename, model2_filename, options):
     f = open(txtfilename,"a")
     f.write("model1_filename =" + "'" + model1_filename + "';\n")
     f.write("model2_filename =" + "'" + model2_filename + "';\n")
+    f.close()
 
     os.system("slml2report input.txt;rm input")
 
