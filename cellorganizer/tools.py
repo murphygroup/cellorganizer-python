@@ -161,7 +161,7 @@ def slml2slml(files, options):
     f.write(text)
     f.close()
 
-    os.system("slml2slml input.txt;rm input")
+    os.system("slml2slml input.txt;rm input.txt")
 
     return None
 
@@ -186,15 +186,19 @@ def slml2report(model1_filename, model2_filename, options):
     __options2txt(options,txtfilename)
 
     f = open(txtfilename,"a")
-    f.write("model1_filename =" + model1_filename + "\n")
-    f.write("model1_filename =" + model2_filename + "\n")
+    f.write("model1_filename =" + "'" + model1_filename + "';\n")
+    f.write("model2_filename =" + "'" + model2_filename + "';\n")
+    f.close()
 
-    os.system("slml2report input.txt;rm input")
+    os.system("slml2report input.txt;rm input.txt")
 
     # need to copy everything out of report folder to current working directory
-    os.system('mv ./report/* .')
-    os.system('rm -r report/')
-    return None
+    if os.path.exists('report'):
+        os.system('mv ./report/* .')
+        os.system('rm -rf ./report')
+        return True
+    else:
+        return False
 
 #######################################################################
 def imshow(img_path, options):
