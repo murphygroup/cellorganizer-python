@@ -98,7 +98,6 @@ def slml2img(filenames, options):
     f.close()
 
     os.system("slml2img input.txt;rm input.txt")
-
     return None
 
 ################################################################################
@@ -125,7 +124,12 @@ def slml2info(filenames, options):
     f.close()
 
     os.system('slml2info input.txt; rm input.txt')
-    return None
+    if os.path.exists('report'):
+        os.system('mv ./report/* .')
+        os.system('rm -rf ./report')
+        return True
+    else:
+        return False
 
 ################################################################################
 def slml2slml(files, options):
@@ -190,7 +194,6 @@ def slml2report(model1_filename, model2_filename, options):
     # need to copy everything out of report folder to current working directory
     os.system('mv ./report/* .')
     os.system('rm -r report/')
-
     return None
 
 #######################################################################
