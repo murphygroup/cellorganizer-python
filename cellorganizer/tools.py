@@ -192,9 +192,12 @@ def slml2report(model1_filename, model2_filename, options):
     os.system("slml2report input.txt;rm input")
 
     # need to copy everything out of report folder to current working directory
-    os.system('mv ./report/* .')
-    os.system('rm -r report/')
-    return None
+    if os.path.exists('report'):
+        os.system('mv ./report/* .')
+        os.system('rm -rf ./report')
+        return True
+    else:
+        return False
 
 #######################################################################
 def imshow(img_path, options):
