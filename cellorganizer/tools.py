@@ -161,7 +161,7 @@ def slml2slml(files, options):
     f.write(text)
     f.close()
 
-    os.system("slml2slml input.txt;rm input")
+    os.system("slml2slml input.txt;rm input.txt")
 
     return None
 
