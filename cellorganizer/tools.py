@@ -242,13 +242,13 @@ def get_model_files():
 ################################################################################
 def download_latest_notebooks():
     '''
-    Helper function that downloads the latest notebookds from the Murphy Lab's github.
+    Helper function that downloads the latest notebooks from the Murphy Lab's GitHub repository.
     '''
     url = 'https://github.com/murphygroup/cellorganizer-jupyter-notebooks/archive/master.zip'
     print('Retrieving ' + url)
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/notebooks/'):
-            print( 'Creating directorry /home/murphylab/cellorganizer/local/notebooks/' )
+            print( 'Creating directory /home/murphylab/cellorganizer/local/notebooks/' )
             os.mkdir('/home/murphylab/cellorganizer/local/notebooks/')
 
         urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/master.zip')
@@ -262,14 +262,14 @@ def download_latest_notebooks():
 
         return True
     else:
-        print('Unable to find notebooks. Check later.')
+        print('Unable to download notebooks at this time. Try again later.')
         return False
 
 ################################################################################
 def get_image_collection():
     '''
     Helper function that downloads Murphy Lab's image collections used
-    by CellOrganizer for model creation and demonstrations
+    by CellOrganizer for model creation and demonstrations.
     '''
 
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
