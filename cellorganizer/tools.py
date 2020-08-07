@@ -236,37 +236,33 @@ def get_model_files():
 
         return True
     else:
-        print('Unable to find file. Check later.')
+        print('Unable to find model files. Check later.')
         return False
 
 ################################################################################
 def download_latest_notebooks():
     '''
-    Helper function that downloads the latest notebookds from the Murphy Lab's website.
+    Helper function that downloads the latest notebookds from the Murphy Lab's github.
     '''
-    url = 'http://www.cellorganizer.org/Downloads/latest/docker/notebooks.txt'
+    url = 'https://github.com/murphygroup/cellorganizer-jupyter-notebooks/archive/master.zip'
     print('Retrieving ' + url)
     if __does_file_exist(url):
-        urllib.request.urlretrieve(url, 'notebooks.txt')
-        f = open('notebooks.txt','r')
+        if not os.path.exists('/home/murphylab/cellorganizer/local/notebooks/'):
+            print( 'Creating directorry /home/murphylab/cellorganizer/local/notebooks/' )
+            os.mkdir('/home/murphylab/cellorganizer/local/notebooks/')
 
-        print('Downloading list of files')
-        while True:
-            line = f.readline()
-            if not line:
-                 break
-            else:
-                print('Retrieving new notebooks')
-                urllib.request.urlretrieve(line, 'curr_file.tgz')
-                os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf curr_file.tgz')
-                os.remove('curr_file.tgz')
+        urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/master.zip')
+        print( 'Extracting notebooks...' )
+        os.system('unzip /home/murphylab/cellorganizer/local/master.zip')
+        os.remove('/home/murphylab/cellorganizer/local/master.zip')
 
-        if os.path.isfile('notebooks.txt'):
-            os.remove('notebooks.txt')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demos/ .')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ .')
+        os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
 
         return True
     else:
-        print('Unable to find file. Check later.')
+        print('Unable to find notebooks. Check later.')
         return False
 
 ################################################################################
@@ -278,32 +274,16 @@ def get_image_collection():
 
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
     if __does_file_exist(url):
-        if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images'):
-            if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.downloading_images'):
-                if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
-                    print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
-                    os.mkdir('/home/murphylab/cellorganizer/local/images/')
+        if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
+            print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
+            os.mkdir('/home/murphylab/cellorganizer/local/images/')
 
-                f = open( '/home/murphylab/cellorganizer/local/images/.downloading_images', 'a' )
-                f.close()
+            urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/images.tgz')
+            os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf /home/murphylab/cellorganizer/local/images.tgz')
+            os.remove('/home/murphylab/cellorganizer/local/images.tgz')
 
-                zip_file = url + '/' + tarball
-                print( '2D/3D HeLa dataset from the Murphy Lab' )
-                urllib.request.urlretrieve( zip_file, '2D_set.zip' )
-                print( 'Moving files to new location' )
-                os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/local/images/' )
-                print( 'Unzipping file' )
-                os.system( 'unzip /home/murphylab/cellorganizer/local/images/2D_set.zip -d /home/murphylab/cellorganizer/local/images/' )
-                print( 'Removing file' )
-                os.remove( '/home/murphylab/cellorganizer/local/images/2D_set.zip' )
-                os.remove('/home/murphylab/cellorganizer/local/images/.downloading_images')
+            return True
 
-                f = open('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images','a')
-                f.close()
-                return True
-            else:
-                print('Another process is downloading the images. Please wait...')
-                return False
         else:
             print('Image collections already present. Skipping download.')
             return False
