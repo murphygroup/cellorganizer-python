@@ -256,9 +256,9 @@ def download_latest_notebooks():
         os.system('unzip /home/murphylab/cellorganizer/local/master.zip')
         os.remove('/home/murphylab/cellorganizer/local/master.zip')
 
-        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demos/ .')
-        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ .')
-        os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
+        os.system('mv ./cellorganizer-jupyter-notebooks-master/demo_notebooks/ ./notebooks/.')
+        os.system('mv ./cellorganizer-jupyter-notebooks-master/workshop_demos/ ./notebooks/.')
+        os.system('rm -rf ./cellorganizer-jupyter-notebooks-master')
 
         return True
     else:
