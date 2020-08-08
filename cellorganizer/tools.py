@@ -85,6 +85,7 @@ def slml2img(filenames, options):
     options                  A structure holding the function options
 
     '''
+
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
     f.write("filenames = {")
@@ -110,6 +111,7 @@ def slml2info(filenames, options):
     filename                 Model filename
     options                  Options structure
     '''
+
     txtfilename = 'input.txt'
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
@@ -149,6 +151,7 @@ def slml2slml(files, options):
     output_filename           (optional)the file name of output model,
                                default is "model.mat"
     '''
+
     __options2txt(options,"input.txt")
     f = open("input.txt","a")
     f.write("files = {")
@@ -209,112 +212,94 @@ def imshow(img_path, options):
     -----------------------  ------------
     img_path                 filename of image
     '''
+
     img_file = Path(img_path)
     if img_file.is_file():
         img = plt.imread(img_path)
         plt.imshow(img)
         plt.show()
     else:
-        print("Invalid file path.")
+        print('Invalid file path.')
 
 ################################################################################
 def get_model_files():
     '''
     Helper function that downloads models from the Murphy Lab's website.
     '''
+
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/models.tgz'
     print('Retrieving ' + url)
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/models/'):
-            print( 'Creating directorry /home/murphylab/cellorganizer/local/models/' )
+            print('Creating directory /home/murphylab/cellorganizer/local/models/')
             os.mkdir('/home/murphylab/cellorganizer/local/models/')
 
         urllib.request.urlretrieve( url, 'models.tgz' )
         print( 'Extracting models' )
-        os.system( 'tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz' )
-        os.system( 'rm -fv models.tgz' )
+        os.system('tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz')
+        os.system('rm -fv models.tgz')
 
         return True
     else:
-        print('Unable to find file. Check later.')
+        print('Unable to find model files. Check later.')
         return False
 
 ################################################################################
 def download_latest_notebooks():
     '''
-    Helper function that downloads the latest notebookds from the Murphy Lab's website.
+    Helper function that downloads the latest notebooks from the Murphy Lab's GitHub repository.
     '''
-    url = 'http://www.cellorganizer.org/Downloads/latest/docker/notebooks.txt'
+
+    url = 'https://github.com/murphygroup/cellorganizer-jupyter-notebooks/archive/master.zip'
     print('Retrieving ' + url)
     if __does_file_exist(url):
-        urllib.request.urlretrieve(url, 'notebooks.txt')
-        f = open('notebooks.txt','r')
+        if not os.path.exists('/home/murphylab/cellorganizer/local/notebooks/'):
+            print('Creating directory /home/murphylab/cellorganizer/local/notebooks/')
+            os.mkdir('/home/murphylab/cellorganizer/local/notebooks/')
 
-        print('Downloading list of files')
-        while True:
-            line = f.readline()
-            if not line:
-                 break
-            else:
-                print('Retrieving new notebooks')
-                urllib.request.urlretrieve(line, 'curr_file.tgz')
-                os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf curr_file.tgz')
-                os.remove('curr_file.tgz')
+        urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/master.zip')
+        print('Extracting notebooks...')
+        os.system('unzip /home/murphylab/cellorganizer/local/master.zip')
+        os.remove('/home/murphylab/cellorganizer/local/master.zip')
 
-        if os.path.isfile('notebooks.txt'):
-            os.remove('notebooks.txt')
+        os.system('mv ./cellorganizer-jupyter-notebooks-master/demo_notebooks/ ./notebooks/.')
+        os.system('mv ./cellorganizer-jupyter-notebooks-master/workshop_demos/ ./notebooks/.')
+        os.system('rm -rf ./cellorganizer-jupyter-notebooks-master')
 
         return True
     else:
-        print('Unable to find file. Check later.')
+        print('Unable to download notebooks at this time. Try again later.')
         return False
 
 ################################################################################
 def get_image_collection():
     '''
-    Helper function that downloads Murphy Lab's image collections used
-    by CellOrganizer for model creation and demonstrations
+    Helper function that downloads Murphy Lab's image collection used
+    by CellOrganizer for model creation and demonstrations.
     '''
 
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
     if __does_file_exist(url):
-        if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images'):
-            if not os.path.isfile('/home/murphylab/cellorganizer/local/images/.downloading_images'):
-                if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
-                    print( 'Creating directorry /home/murphylab/cellorganizer/local/images/' )
-                    os.mkdir('/home/murphylab/cellorganizer/local/images/')
+        if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
+            print('Creating directory /home/murphylab/cellorganizer/local/images/')
+            os.mkdir('/home/murphylab/cellorganizer/local/images/')
 
-                f = open( '/home/murphylab/cellorganizer/local/images/.downloading_images', 'a' )
-                f.close()
+            urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/images.tgz')
+            os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf /home/murphylab/cellorganizer/local/images.tgz')
+            os.remove('/home/murphylab/cellorganizer/local/images.tgz')
 
-                zip_file = url + '/' + tarball
-                print( '2D/3D HeLa dataset from the Murphy Lab' )
-                urllib.request.urlretrieve( zip_file, '2D_set.zip' )
-                print( 'Moving files to new location' )
-                os.system( 'mv 2D_set.zip /home/murphylab/cellorganizer/local/images/' )
-                print( 'Unzipping file' )
-                os.system( 'unzip /home/murphylab/cellorganizer/local/images/2D_set.zip -d /home/murphylab/cellorganizer/local/images/' )
-                print( 'Removing file' )
-                os.remove( '/home/murphylab/cellorganizer/local/images/2D_set.zip' )
-                os.remove('/home/murphylab/cellorganizer/local/images/.downloading_images')
-
-                f = open('/home/murphylab/cellorganizer/local/images/.succesfully_downloaded_images','a')
-                f.close()
-                return True
-            else:
-                print('Another process is downloading the images. Please wait...')
-                return False
+            return True
         else:
-            print('Image collections already present. Skipping download.')
+            print('Image collection is already present. Skipping download.')
             return False
     else:
-        print('Unable to find file. Check later.')
+        print('Unable to download images at this time. Try again later.')
         return False
 
 ################################################################################
 def load( matfile ):
     '''
-    Loads a Matlab file into the workspace as a dictionary
+    Loads a Matlab file into the workspace as a dictionary.
     '''
 
     model=__mat2python(matfile)
@@ -423,6 +408,7 @@ def __mat2numpy(matfile,savefile,parameter=None):
 	@param matfile: a valid string of matfile in the disk
 	@param savefile: the name of the numpy file needed to be saved
 	'''
+
 	model=__mat2python(matfile)
 	if (model=={}):
 		print("Empty matfile")
@@ -443,6 +429,7 @@ def __mat2python(matfile,parameter=None):
 	__mat2python reads a .mat file which contains a struct representing a model and returns a dictionary corresponding to the matlab struct
 	@param matfile: a string which represend a valid matfile in the disk
 	'''
+
 	if type(matfile)!=str:
 		print("__mat2python: input matfile has to be a string")
 		return {}
@@ -467,6 +454,7 @@ def __convert(model):
 	__convert is a helper method that recursively turns a  mat_struct to dictionary
 	@param: model: a mat_struct defined by scipy.io.matlab
 	'''
+
 	if type(model)!=scipy.io.matlab.mio5_params.mat_struct:
 		if type(model)==str:
 			model=str(model)
@@ -484,6 +472,7 @@ def __getmodel(model):
     Sets path for loading cellorganizer
     @param: model: a mat_struct defined by scipy.io.matlab
     '''
+
     path=os.sep.join(cellorganizer.__file__.split(os.sep)[0:-1])+os.sep+"models"+os.sep+model
     # when you are importing cellorganizer in the distribution directory, the path will be the local path
     if path.index('cellorganizer')==0:
@@ -496,6 +485,7 @@ def __printKeys(myDict, theDict, tempStr = ''):
     '''
     This is the recursive function to create the dictionary
     '''
+
     keys = myDict.keys()
     for key in keys:
         if isinstance(myDict[key],dict):
@@ -511,6 +501,7 @@ def __mat2simplyDict(matfile):
     '''
     This are the functions to create the shallow dictionary.
     '''
+
     model = __mat2python(matfile,parameter=None)
     ans= {}
     printKeys(model,ans)
