@@ -4,6 +4,8 @@ import scipy.io
 import matplotlib.pyplot as plt
 from pathlib import Path
 import urllib.request
+import requests
+
 
 ################################################################################
 # Public Methods
@@ -279,14 +281,20 @@ def get_image_collection():
     '''
 
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
+    target_path = "images.zip"
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
             print('Creating directory /home/murphylab/cellorganizer/local/images/')
             os.mkdir('/home/murphylab/cellorganizer/local/images/')
 
-            urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/images.tgz')
-            os.system('tar -C /home/murphylab/cellorganizer/local --keep-old-files -xvf /home/murphylab/cellorganizer/local/images.tgz')
-            os.remove('/home/murphylab/cellorganizer/local/images.tgz')
+            response = requests.get(url, stream=True)
+            if response.status_code == 200:
+                with open(target_path, 'wb') as f:
+                    f.write(response.raw.read())
+
+            print("Extracting image files .....")
+            os.system('unzip /home/murphylab/cellorganizer/local/images.zip')
+            os.remove('/home/murphylab/cellorganizer/local/images.zip')
 
             return True
         else:
