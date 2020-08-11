@@ -240,7 +240,7 @@ def get_model_files():
         print( 'Extracting models' )
         os.system('tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz')
         os.system('rm -fv models.tgz')
-
+        print('Fetched all models...')
         return True
     else:
         print('Unable to find model files. Check later.')
@@ -261,13 +261,13 @@ def download_latest_notebooks():
 
         urllib.request.urlretrieve(url, '/home/murphylab/cellorganizer/local/master.zip')
         print('Extracting notebooks...')
-        os.system('unzip /home/murphylab/cellorganizer/local/master.zip')
+        os.system('unzip /home/murphylab/cellorganizer/local/master.zip -d /home/murphylab/cellorganizer/local/')
         os.remove('/home/murphylab/cellorganizer/local/master.zip')
-
-        os.system('mv ./cellorganizer-jupyter-notebooks-master/demo_notebooks/ ./notebooks/.')
-        os.system('mv ./cellorganizer-jupyter-notebooks-master/workshop_demos/ ./notebooks/.')
-        os.system('rm -rf ./cellorganizer-jupyter-notebooks-master')
-
+        print('Extracting notebooks done.')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demo_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
+        print('Fetched all notebooks...')
         return True
     else:
         print('Unable to download notebooks at this time. Try again later.')
@@ -281,7 +281,7 @@ def get_image_collection():
     '''
 
     url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
-    target_path = "images.zip"
+    target_path = "/home/murphylab/cellorganizer/local/images.zip"
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
             print('Creating directory /home/murphylab/cellorganizer/local/images/')
@@ -293,9 +293,9 @@ def get_image_collection():
                     f.write(response.raw.read())
 
             print("Extracting image files .....")
-            os.system('unzip /home/murphylab/cellorganizer/local/images.zip')
+            os.system('unzip /home/murphylab/cellorganizer/local/images.zip -d /home/murphylab/cellorganizer/local/')
             os.remove('/home/murphylab/cellorganizer/local/images.zip')
-
+            print('Fetched all images...')
             return True
         else:
             print('Image collection is already present. Skipping download.')
