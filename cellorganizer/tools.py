@@ -281,7 +281,7 @@ def get_image_collection():
     '''
 
     # url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
-    url = 'https://drive.google.com/file/d/1v4RN7feITmYRiMyl7gSb-OhNABSlSEfC/view?usp=sharing'
+    url = 'https://drive.google.com/u/0/uc?export=download&confirm=8zsc&id=1v4RN7feITmYRiMyl7gSb-OhNABSlSEfC'
     target_path = "/home/murphylab/cellorganizer/local/mmbios-images.zip"
     print('Retrieving ' + url)
     if __does_file_exist(url):
