@@ -295,8 +295,8 @@ def get_image_collection():
                     f.write(response.raw.read())
 
             print("Extracting image files .....")
-            os.system('unzip /home/murphylab/cellorganizer/local/images.zip -d /home/murphylab/cellorganizer/local/')
-            os.remove('/home/murphylab/cellorganizer/local/images.zip')
+            os.system('unzip /home/murphylab/cellorganizer/local/mmbios-images.zip -d /home/murphylab/cellorganizer/local/')
+            os.remove('/home/murphylab/cellorganizer/local/mmbios-images.zip')
             print('Fetched all images...')
             return True
         else:
