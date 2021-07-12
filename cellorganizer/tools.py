@@ -280,7 +280,8 @@ def get_image_collection():
     by CellOrganizer for model creation and demonstrations.
     '''
 
-    url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
+    # url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
+    url = 'https://drive.google.com/file/d/1v4RN7feITmYRiMyl7gSb-OhNABSlSEfC/view?usp=sharing'
     target_path = "/home/murphylab/cellorganizer/local/images.zip"
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
