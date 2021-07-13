@@ -266,6 +266,7 @@ def download_latest_notebooks():
         print('Extracting notebooks done.')
         os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demo_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
         os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/helper_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
         os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
         print('Fetched all notebooks...')
         return True
