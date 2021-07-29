@@ -266,6 +266,7 @@ def download_latest_notebooks():
         print('Extracting notebooks done.')
         os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demo_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
         os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/helper_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
         os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
         print('Fetched all notebooks...')
         return True
@@ -280,8 +281,11 @@ def get_image_collection():
     by CellOrganizer for model creation and demonstrations.
     '''
 
-    url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
-    target_path = "/home/murphylab/cellorganizer/local/images.zip"
+    # url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
+    url = 'http://www.andrew.cmu.edu/~icaoberg/mmbios-images.zip'
+
+    target_path = "/home/murphylab/cellorganizer/local/mmbios-images.zip"
+    print('Retrieving ' + url)
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/images/'):
             print('Creating directory /home/murphylab/cellorganizer/local/images/')
@@ -293,8 +297,8 @@ def get_image_collection():
                     f.write(response.raw.read())
 
             print("Extracting image files .....")
-            os.system('unzip /home/murphylab/cellorganizer/local/images.zip -d /home/murphylab/cellorganizer/local/')
-            os.remove('/home/murphylab/cellorganizer/local/images.zip')
+            os.system('unzip /home/murphylab/cellorganizer/local/mmbios-images.zip -d /home/murphylab/cellorganizer/local/')
+            os.remove('/home/murphylab/cellorganizer/local/mmbios-images.zip')
             print('Fetched all images...')
             return True
         else:
