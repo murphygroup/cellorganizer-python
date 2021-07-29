@@ -2,3 +2,6 @@ numpy
 scipy
 matplotlib
 tabulate
+aicsimageio
+python-bioformats
+cellpose
