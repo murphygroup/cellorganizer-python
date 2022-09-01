@@ -10,6 +10,24 @@ import requests
 ################################################################################
 # Public Methods
 ################################################################################
+def spharm_rpdm_image_parameterization(image_path, options):
+
+    txtfilename = "input.txt"
+    __options2txt(options,txtfilename)
+    f = open(txtfilename,"a")
+
+
+################################################################################
+def newfunc():
+    pass
+################################################################################
+def newfunc2():
+    pass
+################################################################################
+def newfunc3():
+    pass
+
+################################################################################
 def img2slml(dim, dna, cell, protein, options):
     '''
     Trains a generative model of protein subcellular location from a
