@@ -13,16 +13,53 @@ import requests
 def spharm_rpdm_image_parameterization(image_path, options):
 
     txtfilename = "input.txt"
-    __options2txt(options,txtfilename)
-    f = open(txtfilename,"a")
+    __options2txt(options, txtfilename)
+    f = open(txtfilename, "a")
 
+    #write path to image for matlab to be able to read
+    text = "cur_image = '" + image_path + "';\n"
+    f.write(text)
+    f.close()
+
+    os.system("spharm_rpdm_image_parameterization input.txt; rm input.txt")
+    #checking if file exists
+    answer = os.path.isfile(options['model.filename'])
+    return answer
 
 ################################################################################
-def newfunc():
-    pass
+def spharm_rpdm_sample_or_reconstruct_images(model_path, options):
+
+    txtfilename = "input.txt"
+    __options2txt(options, txtfilename)
+    f = open(txtfilename, "a")
+
+    #write path to model for matlab to be able to read
+    text = "model_path = '" + model_path + "';\n"
+    f.write(text)
+    f.close()
+
+    os.system("spharm_rpdm_sample_or_reconstruct_images input.txt; rm input.txt")
+    #checking if file exists
+    answer = os.path.isfile(options['model.filename'])
+    return answer
+
 ################################################################################
-def newfunc2():
-    pass
+def reconstruct_spharm_descriptor_to_mesh(model_path, options):
+
+    txtfilename = "input.txt"
+    __options2txt(options, txtfilename)
+    f = open(txtfilename, "a")
+
+    #write path to model for matlab to be able to read
+    text = "model_path = '" + model_path + "';\n"
+    f.write(text)
+    f.close()
+
+    os.system("reconstruct_spharm_descriptor_to_mesh input.txt; rm input.txt")
+    #checking if file exists
+    answer = os.path.isfile(options['model.filename'])
+    return answer
+
 ################################################################################
 def newfunc3():
     pass
@@ -49,8 +86,8 @@ def img2slml(dim, dna, cell, protein, options):
     '''
 
     txtfilename = "input.txt"
-    __options2txt(options,txtfilename)
-    f = open(txtfilename,"a")
+    __options2txt(options, txtfilename)
+    f = open(txtfilename, "a")
 
     text = "dimensionality = '" + dim +"';\n"
     f.write(text)
@@ -85,7 +122,7 @@ def img2slml(dim, dna, cell, protein, options):
 
     os.system("img2slml input.txt;rm input.txt")
     # checking if the model file is generated
-    answer  = os.path.isfile(options['model.filename'])
+    answer = os.path.isfile(options['model.filename'])
     return answer
 
 ################################################################################
