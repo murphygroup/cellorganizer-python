@@ -10,24 +10,25 @@ import requests
 ################################################################################
 # Public Methods
 ################################################################################
-def spharm_rpdm_image_parameterization(image_path, options):
+def image2SPHARMparameterization(image_path, options):
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
 
     #write path to image for matlab to be able to read
-    text = "cur_image = '" + image_path + "';\n"
+    text = "image_path = '" + image_path + "';\n"
     f.write(text)
     f.close()
 
-    os.system("spharm_rpdm_image_parameterization input.txt; rm input.txt")
+    os.system("image2SPHARMparameterization input.txt; rm input.txt")
     #checking if file exists
-    answer = os.path.isfile(options['model.filename'])
+    answer = os.path.isfile(options['output_filepath'])
+
     return answer
 
-################################################################################
-def spharm_rpdm_sample_or_reconstruct_images(model_path, options):
+#########################################git s#######################################
+def SPHARMparameterization2image(model_path, options):
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
@@ -38,13 +39,13 @@ def spharm_rpdm_sample_or_reconstruct_images(model_path, options):
     f.write(text)
     f.close()
 
-    os.system("spharm_rpdm_sample_or_reconstruct_images input.txt; rm input.txt")
+    os.system("SPHARMparameterization2image input.txt; rm input.txt")
     #checking if file exists
-    answer = os.path.isfile(options['model.filename'])
+    answer = os.path.isfile(options['output_filepath'])
     return answer
 
 ################################################################################
-def reconstruct_spharm_descriptor_to_mesh(model_path, options):
+def SPHARMparameterization2mesh(model_path, options):
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
@@ -55,9 +56,9 @@ def reconstruct_spharm_descriptor_to_mesh(model_path, options):
     f.write(text)
     f.close()
 
-    os.system("reconstruct_spharm_descriptor_to_mesh input.txt; rm input.txt")
+    os.system("SPHARMparameterization2mesh input.txt; rm input.txt")
     #checking if file exists
-    answer = os.path.isfile(options['model.filename'])
+    answer = os.path.isfile(options['output_filepath'])
     return answer
 
 ################################################################################
