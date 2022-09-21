@@ -71,7 +71,7 @@ def SPHARMparameterization2image(model_path, options):
     os.system("SPHARMparameterization2image input.txt; rm input.txt")
     # checking if file exists
     # answer = os.path.isfile(options['output_filepath'])
-    answer = __mat2python(options['output_filepath'])
+    answer = __mat2python(output_img)
 
     return answer
 
@@ -107,7 +107,7 @@ def SPHARMparameterization2mesh(model_path, options):
     os.system("SPHARMparameterization2mesh input.txt; rm input.txt")
     # checking if file exists
     # answer = os.path.isfile(options['output_filepath'])
-    answer = __mat2python(options['output_filepath'])
+    answer = __mat2python(output_mesh)
 
     # return back descriptors
     return answer
