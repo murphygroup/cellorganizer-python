@@ -10,55 +10,106 @@ import requests
 ################################################################################
 # Public Methods
 ################################################################################
-def image2SPHARMparameterization(image_path, options):
+def image2SPHARMparameterization(data, options):
+
+    #######
+    #setup#
+    #######
+    unique_filename_img = str(uuid.uuid4())
+    unique_filename_params = str(uuid.uuid4())
+    input_img = '/tmp' + '/' + unique_filename_img + '.mat'
+    output_params = '/tmp' + '/' + unique_filename_params + '.mat'
+    #######
+    #######
+
+    __save_numpy2mat(data, input_img)
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
 
-    #write path to image for matlab to be able to read
-    text = "image_path = '" + image_path + "';\n"
+    # write path to image for matlab to be able to read
+    text = "image_path = '" + input_img + "';\n"
+    f.write(text)
+
+    #write path to save intermediates/outputs
+    text = "options.output_filepath = '" + output_params + "';\n"
     f.write(text)
     f.close()
 
     os.system("image2SPHARMparameterization input.txt; rm input.txt")
-    #checking if file exists
-    answer = os.path.isfile(options['output_filepath'])
+    # checking if file exists
+    # answer = os.path.isfile(options['output_filepath'])
 
-    return answer
+    answer = __mat2python(output_params)
+
+    return answerr
 
 #########################################git s#######################################
 def SPHARMparameterization2image(model_path, options):
+    #######
+    #setup#
+    #######
+    unique_filename_img = str(uuid.uuid4())
+    output_img = '/tmp' + '/' + unique_filename_img + '.mat'
+    #######
+    #######
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
 
-    #write path to model for matlab to be able to read
+    # write path to model for matlab to be able to read
     text = "model_path = '" + model_path + "';\n"
+    f.write(text)
+
+    #write path to save intermediates/outputs
+    text = "options.output_filepath = '" + output_img + "';\n"
     f.write(text)
     f.close()
 
     os.system("SPHARMparameterization2image input.txt; rm input.txt")
-    #checking if file exists
-    answer = os.path.isfile(options['output_filepath'])
+    # checking if file exists
+    # answer = os.path.isfile(options['output_filepath'])
+    answer = __mat2python(options['output_filepath'])
+
     return answer
 
 ################################################################################
 def SPHARMparameterization2mesh(model_path, options):
+    #######
+    #setup#
+    #######
+    unique_filename_mesh = str(uuid.uuid4())
+    unique_filename_mesh_figure = str(uuid.uuid4())
+    output_mesh = '/tmp' + '/' + unique_filename_mesh + '.mat'
+    output_mesh_figure = '/tmp' + '/' + unique_filename_mesh_figure + '.mat'
+    #######
+    #######
 
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
 
-    #write path to model for matlab to be able to read
+    # write path to model for matlab to be able to read
     text = "model_path = '" + model_path + "';\n"
+    f.write(text)
+
+    #write path to save intermediates/outputs
+    text = "options.output_filepath = '" + output_mesh + "';\n"
+    f.write(text)
+
+    #optional figure to be saved
+    text = "filename = '" + output_mesh_figure + "';\n"
     f.write(text)
     f.close()
 
     os.system("SPHARMparameterization2mesh input.txt; rm input.txt")
-    #checking if file exists
-    answer = os.path.isfile(options['output_filepath'])
+    # checking if file exists
+    # answer = os.path.isfile(options['output_filepath'])
+    answer = __mat2python(options['output_filepath'])
+
+    # return back descriptors
     return answer
 
 ################################################################################
