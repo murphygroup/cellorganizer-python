@@ -5,12 +5,16 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import urllib.request
 import requests
+import uuid
 
 
 ################################################################################
 # Public Methods
 ################################################################################
 def image2SPHARMparameterization(data, options):
+
+    #print version
+    __get_version()
 
     #######
     #setup#
@@ -19,15 +23,28 @@ def image2SPHARMparameterization(data, options):
     unique_filename_params = str(uuid.uuid4())
     input_img = '/tmp' + '/' + unique_filename_img + '.mat'
     output_params = '/tmp' + '/' + unique_filename_params + '.mat'
+    # print('image filename: ' + unique_filename_img)
+    # print('params filename: ' + unique_filename_params)
     #######
     #######
 
     __save_numpy2mat(data, input_img)
-
     txtfilename = "input.txt"
+    f = open(txtfilename, "w")
+
+    # default options
+    text = "options.NMfirsttry_maxiter = 300; \n \
+            options.NMretry_maxiter = 100; \n \
+            options.NMretry_maxiterbig = 300; \n \
+            options.NMcost_tol = 1e-7; \n \
+            options.NMlargr_tol = 1e-7; \n \
+            options.maxDeg = 31; \n \
+            options.hd_thresh = 10; \n"
+    f.write(text)
+    f.close()
+
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
-
     # write path to image for matlab to be able to read
     text = "image_path = '" + input_img + "';\n"
     f.write(text)
@@ -43,10 +60,18 @@ def image2SPHARMparameterization(data, options):
 
     answer = __mat2python(output_params)
 
-    return answerr
+    #add output_params path to dict
+    answer['model_path'] = output_params
+
+    return answer
+
 
 #########################################git s#######################################
-def SPHARMparameterization2image(model_path, options):
+def SPHARMparameterization2image(struct, options):
+
+    #print version
+    __get_version()
+
     #######
     #setup#
     #######
@@ -56,11 +81,19 @@ def SPHARMparameterization2image(model_path, options):
     #######
 
     txtfilename = "input.txt"
+    f = open(txtfilename, "w")
+
+    #default options
+    text = "options.cropping = 'tight'; \n \
+            options.oversampling_scale = 1; \n \
+            options.debug = false; \n"
+    f.write(text)
+    f.close()
+
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
-
     # write path to model for matlab to be able to read
-    text = "model_path = '" + model_path + "';\n"
+    text = "model_path = '" + struct['model_path'] + "';\n"
     f.write(text)
 
     #write path to save intermediates/outputs
@@ -75,8 +108,13 @@ def SPHARMparameterization2image(model_path, options):
 
     return answer
 
+
 ################################################################################
-def SPHARMparameterization2mesh(model_path, options):
+def SPHARMparameterization2mesh(struct, options):
+
+    #print version
+    __get_version()
+
     #######
     #setup#
     #######
@@ -88,19 +126,28 @@ def SPHARMparameterization2mesh(model_path, options):
     #######
 
     txtfilename = "input.txt"
+    f = open(txtfilename, "w")
+
+    #default options
+    text = "options.figtitle = []; \n \
+            options.plot = 0; \n \
+            options.dpi = 150; \n \
+            options.filename = []; \n"
+    f.write(text)
+    f.close()
+
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
-
     # write path to model for matlab to be able to read
-    text = "model_path = '" + model_path + "';\n"
+    text = "model_path = '" + struct['model_path'] + "';\n"
     f.write(text)
 
-    #write path to save intermediates/outputs
+    # write path to save intermediates/outputs
     text = "options.output_filepath = '" + output_mesh + "';\n"
     f.write(text)
 
-    #optional figure to be saved
-    text = "filename = '" + output_mesh_figure + "';\n"
+    # optional figure to be saved
+    text = "options.filename = '" + output_mesh_figure + "';\n"
     f.write(text)
     f.close()
 
@@ -112,9 +159,6 @@ def SPHARMparameterization2mesh(model_path, options):
     # return back descriptors
     return answer
 
-################################################################################
-def newfunc3():
-    pass
 
 ################################################################################
 def img2slml(dim, dna, cell, protein, options):
@@ -137,11 +181,14 @@ def img2slml(dim, dna, cell, protein, options):
     options                     Options structure
     '''
 
+    #print version
+    __get_version()
+
     txtfilename = "input.txt"
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
 
-    text = "dimensionality = '" + dim +"';\n"
+    text = "dimensionality = '" + dim + "';\n"
     f.write(text)
 
     f.write("dnaImagesDirectoryPath = {")
@@ -150,7 +197,7 @@ def img2slml(dim, dna, cell, protein, options):
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
 
     f.write("cellImagesDirectoryPath = {")
@@ -159,7 +206,7 @@ def img2slml(dim, dna, cell, protein, options):
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
 
     text = ""
@@ -168,7 +215,7 @@ def img2slml(dim, dna, cell, protein, options):
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
     f.close()
 
@@ -176,6 +223,7 @@ def img2slml(dim, dna, cell, protein, options):
     # checking if the model file is generated
     answer = os.path.isfile(options['model.filename'])
     return answer
+
 
 ################################################################################
 def slml2img(filenames, options):
@@ -195,20 +243,21 @@ def slml2img(filenames, options):
 
     '''
 
-    __options2txt(options,"input.txt")
-    f = open("input.txt","a")
+    __options2txt(options, "input.txt")
+    f = open("input.txt", "a")
     f.write("filenames = {")
     text = ""
     for name in filenames:
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
     f.close()
 
     os.system("slml2img input.txt;rm input.txt")
     return None
+
 
 ################################################################################
 def slml2info(filenames, options):
@@ -221,16 +270,19 @@ def slml2info(filenames, options):
     options                  Options structure
     '''
 
+    #print version
+    __get_version()
+
     txtfilename = 'input.txt'
-    __options2txt(options,"input.txt")
-    f = open("input.txt","a")
+    __options2txt(options, "input.txt")
+    f = open("input.txt", "a")
     f.write("files = {")
     text = ""
     for name in filenames:
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
     f.close()
 
@@ -241,6 +293,7 @@ def slml2info(filenames, options):
         return True
     else:
         return False
+
 
 ################################################################################
 def slml2slml(files, options):
@@ -261,21 +314,25 @@ def slml2slml(files, options):
                                default is "model.mat"
     '''
 
-    __options2txt(options,"input.txt")
-    f = open("input.txt","a")
+    #print version
+    __get_version()
+
+    __options2txt(options, "input.txt")
+    f = open("input.txt", "a")
     f.write("files = {")
     text = ""
     for name in files:
         text = text + "'" + name + "',"
 
     text = text[:-1]
-    text = text+"};\n"
+    text = text + "};\n"
     f.write(text)
     f.close()
 
     os.system("slml2slml input.txt;rm input.txt")
 
     return None
+
 
 ################################################################################
 def slml2report(model1_filename, model2_filename, options):
@@ -294,10 +351,13 @@ def slml2report(model1_filename, model2_filename, options):
     answer = slml2report( filename1, filename2, options );
     '''
 
-    txtfilename = "input.txt"
-    __options2txt(options,txtfilename)
+    #print version
+    __get_version()
 
-    f = open(txtfilename,"a")
+    txtfilename = "input.txt"
+    __options2txt(options, txtfilename)
+
+    f = open(txtfilename, "a")
     f.write("model1_filename = " + "'" + model1_filename + "';\n")
     f.write("model2_filename = " + "'" + model2_filename + "';\n")
     f.close()
@@ -311,6 +371,7 @@ def slml2report(model1_filename, model2_filename, options):
         return True
     else:
         return False
+
 
 #######################################################################
 def imshow(img_path, options):
@@ -330,28 +391,35 @@ def imshow(img_path, options):
     else:
         print('Invalid file path.')
 
+
 ################################################################################
 def get_model_files():
     '''
     Helper function that downloads models from the Murphy Lab's website.
     '''
 
-    url = 'http://www.cellorganizer.org/Downloads/latest/docker/models.tgz'
+    # url = 'http://www.cellorganizer.org/Downloads/latest/docker/models.tgz'
+    url = 'https://github.com/murphygroup/models/archive/refs/heads/main.zip'
     print('Retrieving ' + url)
     if __does_file_exist(url):
         if not os.path.exists('/home/murphylab/cellorganizer/local/models/'):
             print('Creating directory /home/murphylab/cellorganizer/local/models/')
             os.mkdir('/home/murphylab/cellorganizer/local/models/')
 
-        urllib.request.urlretrieve( url, 'models.tgz' )
-        print( 'Extracting models' )
-        os.system('tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz')
-        os.system('rm -fv models.tgz')
+        urllib.request.urlretrieve(url, 'main.zip')
+        print('Extracting models')
+        # os.system('tar -C /home/murphylab/cellorganizer/local/ --keep-old-files -xvf models.tgz')
+        # os.system('rm -fv models.tgz')
+        os.system('unzip /home/murphylab/cellorganizer/main.zip -d /home/murphylab/cellorganizer/local/models/')
+        os.remove('/home/murphylab/cellorganizer/main.zip')
+        os.system('mv /home/murphylab/cellorganizer/local/models/models-main/* /home/murphylab/cellorganizer/local/models/')
+        os.system('rm -rf /home/murphylab/cellorganizer/local/models/models-main/')
         print('Fetched all models...')
         return True
     else:
         print('Unable to find model files. Check later.')
         return False
+
 
 ################################################################################
 def download_latest_notebooks():
@@ -371,15 +439,19 @@ def download_latest_notebooks():
         os.system('unzip /home/murphylab/cellorganizer/local/master.zip -d /home/murphylab/cellorganizer/local/')
         os.remove('/home/murphylab/cellorganizer/local/master.zip')
         print('Extracting notebooks done.')
-        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demo_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
-        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ /home/murphylab/cellorganizer/local/notebooks/.')
-        os.system('mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/helper_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system(
+            'mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/demo_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system(
+            'mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/workshop_demos/ /home/murphylab/cellorganizer/local/notebooks/.')
+        os.system(
+            'mv /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master/helper_notebooks/ /home/murphylab/cellorganizer/local/notebooks/.')
         os.system('rm -rf /home/murphylab/cellorganizer/local/cellorganizer-jupyter-notebooks-master')
         print('Fetched all notebooks...')
         return True
     else:
         print('Unable to download notebooks at this time. Try again later.')
         return False
+
 
 ################################################################################
 def get_image_collection():
@@ -404,7 +476,8 @@ def get_image_collection():
                     f.write(response.raw.read())
 
             print("Extracting image files .....")
-            os.system('unzip /home/murphylab/cellorganizer/local/mmbios-images.zip -d /home/murphylab/cellorganizer/local/')
+            os.system(
+                'unzip /home/murphylab/cellorganizer/local/mmbios-images.zip -d /home/murphylab/cellorganizer/local/')
             os.remove('/home/murphylab/cellorganizer/local/mmbios-images.zip')
             print('Fetched all images...')
             return True
@@ -415,17 +488,19 @@ def get_image_collection():
         print('Unable to download images at this time. Try again later.')
         return False
 
+
 ################################################################################
-def load( matfile ):
+def load(matfile):
     '''
     Loads a Matlab file into the workspace as a dictionary.
     '''
 
-    model=__mat2python(matfile)
+    model = __mat2python(matfile)
     return model
 
+
 ################################################################################
-def save( model, filename="model.mat" ):
+def save(model, filename="model.mat"):
     '''
     Saves model into a Matlab mat-file.
     '''
@@ -433,157 +508,169 @@ def save( model, filename="model.mat" ):
     answer = __shallowdict2mat(model, filename)
     return answer
 
+
 ################################################################################
-#Private Methods
+# Private Methods
 ################################################################################
-def __options2txt(options,filename):
-    if os.path.exists(filename):
-        os.system('rm '+filename)
-    f = open(filename,"w")
+def __get_version():
+    from importlib.resources import open_text
+
+    with open_text("cellorganizer", "version.txt") as f:
+        print(f.read().strip())
+
+def __options2txt(options, filename):
+    # if os.path.exists(filename):
+    #     os.system('rm ' + filename)
+    f = open(filename, "a")
     keys = list(options.keys())
     keys.sort()
     for key in keys:
-        if isinstance(options[key],str):
+        if isinstance(options[key], str):
             if 'pwd' in options[key]:
                 if options[key] == 'pwd':
-                    text = 'options.'+key+' = '+ options[key]+";\n"
+                    text = 'options.' + key + ' = ' + options[key] + ";\n"
                 else:
-                    text =  'options.'+key+' = '+"["+ options[key]+"];\n"
+                    text = 'options.' + key + ' = ' + "[" + options[key] + "];\n"
             # if value is list or matrix
             elif options[key] == 'date':
-                text = 'options.'+key+' = '+ options[key]+";\n"
+                text = 'options.' + key + ' = ' + options[key] + ";\n"
             elif '[' in options[key]:
-                text = 'options.'+key+' = '+ options[key]+";\n"
+                text = 'options.' + key + ' = ' + options[key] + ";\n"
             # if value is a function
             elif '(' in options[key]:
-                text = 'options.'+key+' = '+ options[key]+";\n"
+                text = 'options.' + key + ' = ' + options[key] + ";\n"
             elif '{' in options[key]:
-                text = 'options.'+key+' = '+ options[key]+";\n"
+                text = 'options.' + key + ' = ' + options[key] + ";\n"
             else:
-                text = 'options.'+key+' = '+ "'"+options[key]+"';\n"
-        elif isinstance(options[key],bool):
+                text = 'options.' + key + ' = ' + "'" + options[key] + "';\n"
+        elif isinstance(options[key], bool):
             if options[key]:
-                text = 'options.'+key+' = '+ 'true;\n'
+                text = 'options.' + key + ' = ' + 'true;\n'
             else:
-                text = 'options.'+key+' = '+ 'false;\n'
+                text = 'options.' + key + ' = ' + 'false;\n'
         # if value is list
-        elif isinstance(options[key],list):
-            if len(options[key])<1:
-                text = 'options.'+key+' = [];\n'
+        elif isinstance(options[key], list):
+            if len(options[key]) < 1:
+                text = 'options.' + key + ' = [];\n'
             else:
                 if key == "masks":
-                    text = 'options.'+key+' = {'
+                    text = 'options.' + key + ' = {'
                 else:
-                    text = 'options.'+key+' = ['
+                    text = 'options.' + key + ' = ['
                 for element in options[key]:
                     # if element in list is str
-                    if isinstance(element,str):
+                    if isinstance(element, str):
                         text = text + "'" + element + "',"
                     # if element in list is float, keep three decimal places
-                    elif isinstance(element,float):
+                    elif isinstance(element, float):
                         text = text + str('%.3f' % element) + ","
                     else:
                         text = text + str(element) + ","
                 text = text[:-1]
                 if key == "masks":
-                    text = text+"};\n"
+                    text = text + "};\n"
                 else:
-                    text = text+"];\n"
+                    text = text + "];\n"
 
-        elif isinstance(options[key],float):
-            text = 'options.'+key+ ' = ' +str('%.3f' %  options[key])+';\n'
+        elif isinstance(options[key], float):
+            text = 'options.' + key + ' = ' + str('%.3f' % options[key]) + ';\n'
         else:
-            text = 'options.'+key+ ' = ' +str(options[key])+';\n'
+            text = 'options.' + key + ' = ' + str(options[key]) + ';\n'
         f.write(text)
     f.close()
+
 
 ################################################################################
 # The input is shallow model dictionary
 def __shallowdict2mat(model, filename="model.mat"):
     tem_dic = {}
-    #put each element into the fixed dictionary
-    for key,value in model.items():
+    # put each element into the fixed dictionary
+    for key, value in model.items():
         Key_list = key.split('.')
-        if len(Key_list)>1:
+        if len(Key_list) > 1:
             point = tem_dic
-            for i in range(len(Key_list)-1):
+            for i in range(len(Key_list) - 1):
                 if Key_list[i] in point.keys():
                     point = point[Key_list[i]]
                 else:
                     point[Key_list[i]] = {}
                     point = point[Key_list[i]]
 
-            point[Key_list[len(Key_list)-1]] = value
+            point[Key_list[len(Key_list) - 1]] = value
         else:
-            tem_dic.update({key:value})
+            tem_dic.update({key: value})
 
     scipy.io.savemat(filename, mdict={'model': tem_dic})
     return True
 
+
 ################################################################################
-def __mat2numpy(matfile,savefile,parameter=None):
-	'''
+def __mat2numpy(matfile, savefile, parameter=None):
+    '''
 	mat2numpy reads a .mat file which contains a struct representing a model and save it as a numpy file
 	@param matfile: a valid string of matfile in the disk
 	@param savefile: the name of the numpy file needed to be saved
 	'''
 
-	model=__mat2python(matfile)
-	if (model=={}):
-		print("Empty matfile")
-		return False
-	if type(savefile)!=str:
-		print("__mat2numpy: input savefile must be a string")
-		return False
-	try:
-		np.save(savefile,model)
-		return True
-	except:
-		print("__mat2numpy:Can't save the numpy file")
-		return False
+    model = __mat2python(matfile)
+    if (model == {}):
+        print("Empty matfile")
+        return False
+    if type(savefile) != str:
+        print("__mat2numpy: input savefile must be a string")
+        return False
+    try:
+        np.save(savefile, model)
+        return True
+    except:
+        print("__mat2numpy:Can't save the numpy file")
+        return False
+
 
 ################################################################################
-def __mat2python(matfile,parameter=None):
-	'''
+def __mat2python(matfile, parameter=None):
+    '''
 	__mat2python reads a .mat file which contains a struct representing a model and returns a dictionary corresponding to the matlab struct
 	@param matfile: a string which represend a valid matfile in the disk
 	'''
 
-	if type(matfile)!=str:
-		print("__mat2python: input matfile has to be a string")
-		return {}
-	if not os.path.isfile(matfile):
-		print("__mat2python: matfile: "+matfile+" does not exsist")
-		return {}
-	if not matfile.endswith('.mat'):
-		print("__mat2python: matfile: "+matfile+" is not a valid .mat format")
-		return {}
-	try:
-		model=scipy.io.loadmat(matfile,squeeze_me=True,struct_as_record=False)
-	except:
-		print("__mat2python: can't load "+matfile)
-		return {}
-	for key in model:
-		if "__" not in key:
-			return __convert(model[key])
+    if type(matfile) != str:
+        print("__mat2python: input matfile has to be a string")
+        return {}
+    if not os.path.isfile(matfile):
+        print("__mat2python: matfile: " + matfile + " does not exsist")
+        return {}
+    if not matfile.endswith('.mat'):
+        print("__mat2python: matfile: " + matfile + " is not a valid .mat format")
+        return {}
+    try:
+        model = scipy.io.loadmat(matfile, squeeze_me=True, struct_as_record=False)
+    except:
+        print("__mat2python: can't load " + matfile)
+        return {}
+    for key in model:
+        if "__" not in key:
+            return __convert(model[key])
+
 
 ################################################################################
 def __convert(model):
-	'''
+    '''
 	__convert is a helper method that recursively turns a  mat_struct to dictionary
 	@param: model: a mat_struct defined by scipy.io.matlab
 	'''
 
-	if type(model)!=scipy.io.matlab.mio5_params.mat_struct:
-		if type(model)==str:
-			model=str(model)
-		return model
-	else:
-		model1=model.__dict__
-		del model1['_fieldnames']
-		for key in model1:
-			model1[key]=__convert(model1[key])
-		return model1
+    if type(model) != scipy.io.matlab.mio5_params.mat_struct:
+        if type(model) == str:
+            model = str(model)
+        return model
+    else:
+        model1 = model.__dict__
+        del model1['_fieldnames']
+        for key in model1:
+            model1[key] = __convert(model1[key])
+        return model1
+
 
 ################################################################################
 def __getmodel(model):
@@ -592,28 +679,30 @@ def __getmodel(model):
     @param: model: a mat_struct defined by scipy.io.matlab
     '''
 
-    path=os.sep.join(cellorganizer.__file__.split(os.sep)[0:-1])+os.sep+"models"+os.sep+model
+    path = os.sep.join(cellorganizer.__file__.split(os.sep)[0:-1]) + os.sep + "models" + os.sep + model
     # when you are importing cellorganizer in the distribution directory, the path will be the local path
-    if path.index('cellorganizer')==0:
+    if path.index('cellorganizer') == 0:
         print("You are importing cellorganizer in the distribution folder")
-        path=path.split('cellorganizer'+os.sep)[1]
+        path = path.split('cellorganizer' + os.sep)[1]
     return np.load(path).tolist()
 
+
 ################################################################################
-def __printKeys(myDict, theDict, tempStr = ''):
+def __printKeys(myDict, theDict, tempStr=''):
     '''
     This is the recursive function to create the dictionary
     '''
 
     keys = myDict.keys()
     for key in keys:
-        if isinstance(myDict[key],dict):
-            __printKeys(myDict[key], theDict, tempStr+key+'.')
+        if isinstance(myDict[key], dict):
+            __printKeys(myDict[key], theDict, tempStr + key + '.')
         else:
             if not tempStr:
-                theDict.update({key:myDict[key]})
+                theDict.update({key: myDict[key]})
             else:
-                theDict.update({tempStr+key:myDict[key]})
+                theDict.update({tempStr + key: myDict[key]})
+
 
 ################################################################################
 def __mat2simplyDict(matfile):
@@ -621,10 +710,11 @@ def __mat2simplyDict(matfile):
     This are the functions to create the shallow dictionary.
     '''
 
-    model = __mat2python(matfile,parameter=None)
-    ans= {}
-    printKeys(model,ans)
+    model = __mat2python(matfile, parameter=None)
+    ans = {}
+    printKeys(model, ans)
     return ans
+
 
 ################################################################################
 def __does_file_exist(url):
@@ -633,8 +723,19 @@ def __does_file_exist(url):
     '''
 
     try:
-        response =urllib.request.urlopen(url)
+        response = urllib.request.urlopen(url)
     except:
         return False
 
     return True
+
+
+def __save_numpy2mat(numpyarr, output):
+    '''
+    Helper function to save numpy as mat
+    '''
+
+    savedict = {
+        'cur_image': numpyarr
+    }
+    scipy.io.savemat(output, savedict)
