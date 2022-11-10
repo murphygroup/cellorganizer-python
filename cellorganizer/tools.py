@@ -11,7 +11,7 @@ import uuid
 ################################################################################
 # Public Methods
 ################################################################################
-def image2SPHARMparameterization(data, options):
+def image2SPHARMparameterization(data, options=None):
 
     #print version
     __get_version()
@@ -30,18 +30,18 @@ def image2SPHARMparameterization(data, options):
 
     __save_numpy2mat(data, input_img)
     txtfilename = "input.txt"
-    f = open(txtfilename, "w")
+    # f = open(txtfilename, "w")
 
     # default options
-    text = "options.NMfirsttry_maxiter = 300; \n \
-            options.NMretry_maxiter = 100; \n \
-            options.NMretry_maxiterbig = 300; \n \
-            options.NMcost_tol = 1e-7; \n \
-            options.NMlargr_tol = 1e-7; \n \
-            options.maxDeg = 31; \n \
-            options.hd_thresh = 10; \n"
-    f.write(text)
-    f.close()
+    # text = "options.NMfirsttry_maxiter = 300; \n \
+    #         options.NMretry_maxiter = 100; \n \
+    #         options.NMretry_maxiterbig = 300; \n \
+    #         options.NMcost_tol = 1e-7; \n \
+    #         options.NMlargr_tol = 1e-7; \n \
+    #         options.maxDeg = 31; \n \
+    #         options.hd_thresh = 10; \n"
+    # f.write(text)
+    # f.close()
 
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
@@ -67,9 +67,11 @@ def image2SPHARMparameterization(data, options):
 
 
 #########################################git s#######################################
-def SPHARMparameterization2image(struct, options):
+def SPHARMparameterization2image(struct, options=None):
 
     #print version
+    if options is None:
+        options = {}
     __get_version()
 
     #######
@@ -81,14 +83,14 @@ def SPHARMparameterization2image(struct, options):
     #######
 
     txtfilename = "input.txt"
-    f = open(txtfilename, "w")
+    # f = open(txtfilename, "w")
 
     #default options
-    text = "options.cropping = 'tight'; \n \
-            options.oversampling_scale = 1; \n \
-            options.debug = false; \n"
-    f.write(text)
-    f.close()
+    # text = "options.cropping = 'tight'; \n \
+    #         options.oversampling_scale = 1; \n \
+    #         options.debug = false; \n"
+    # f.write(text)
+    # f.close()
 
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
@@ -110,7 +112,7 @@ def SPHARMparameterization2image(struct, options):
 
 
 ################################################################################
-def SPHARMparameterization2mesh(struct, options):
+def SPHARMparameterization2mesh(struct, options=None):
 
     #print version
     __get_version()
@@ -126,15 +128,15 @@ def SPHARMparameterization2mesh(struct, options):
     #######
 
     txtfilename = "input.txt"
-    f = open(txtfilename, "w")
+    # f = open(txtfilename, "w")
 
     #default options
-    text = "options.figtitle = []; \n \
-            options.plot = 0; \n \
-            options.dpi = 150; \n \
-            options.filename = []; \n"
-    f.write(text)
-    f.close()
+    # text = "options.figtitle = []; \n \
+    #         options.plot = 0; \n \
+    #         options.dpi = 150; \n \
+    #         options.filename = []; \n"
+    # f.write(text)
+    # f.close()
 
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
@@ -521,63 +523,68 @@ def __get_version():
 def __options2txt(options, filename):
     # if os.path.exists(filename):
     #     os.system('rm ' + filename)
-    f = open(filename, "a")
-    keys = list(options.keys())
-    keys.sort()
-    for key in keys:
-        if isinstance(options[key], str):
-            if 'pwd' in options[key]:
-                if options[key] == 'pwd':
+    f = open(filename, "w")
+
+    if options == None:
+        f.close()
+        return
+    else:
+        keys = list(options.keys())
+        keys.sort()
+        for key in keys:
+            if isinstance(options[key], str):
+                if 'pwd' in options[key]:
+                    if options[key] == 'pwd':
+                        text = 'options.' + key + ' = ' + options[key] + ";\n"
+                    else:
+                        text = 'options.' + key + ' = ' + "[" + options[key] + "];\n"
+                # if value is list or matrix
+                elif options[key] == 'date':
+                    text = 'options.' + key + ' = ' + options[key] + ";\n"
+                elif '[' in options[key]:
+                    text = 'options.' + key + ' = ' + options[key] + ";\n"
+                # if value is a function
+                elif '(' in options[key]:
+                    text = 'options.' + key + ' = ' + options[key] + ";\n"
+                elif '{' in options[key]:
                     text = 'options.' + key + ' = ' + options[key] + ";\n"
                 else:
-                    text = 'options.' + key + ' = ' + "[" + options[key] + "];\n"
-            # if value is list or matrix
-            elif options[key] == 'date':
-                text = 'options.' + key + ' = ' + options[key] + ";\n"
-            elif '[' in options[key]:
-                text = 'options.' + key + ' = ' + options[key] + ";\n"
-            # if value is a function
-            elif '(' in options[key]:
-                text = 'options.' + key + ' = ' + options[key] + ";\n"
-            elif '{' in options[key]:
-                text = 'options.' + key + ' = ' + options[key] + ";\n"
-            else:
-                text = 'options.' + key + ' = ' + "'" + options[key] + "';\n"
-        elif isinstance(options[key], bool):
-            if options[key]:
-                text = 'options.' + key + ' = ' + 'true;\n'
-            else:
-                text = 'options.' + key + ' = ' + 'false;\n'
-        # if value is list
-        elif isinstance(options[key], list):
-            if len(options[key]) < 1:
-                text = 'options.' + key + ' = [];\n'
-            else:
-                if key == "masks":
-                    text = 'options.' + key + ' = {'
+                    text = 'options.' + key + ' = ' + "'" + options[key] + "';\n"
+            elif isinstance(options[key], bool):
+                if options[key]:
+                    text = 'options.' + key + ' = ' + 'true;\n'
                 else:
-                    text = 'options.' + key + ' = ['
-                for element in options[key]:
-                    # if element in list is str
-                    if isinstance(element, str):
-                        text = text + "'" + element + "',"
-                    # if element in list is float, keep three decimal places
-                    elif isinstance(element, float):
-                        text = text + str('%.3f' % element) + ","
+                    text = 'options.' + key + ' = ' + 'false;\n'
+            # if value is list
+            elif isinstance(options[key], list):
+                if len(options[key]) < 1:
+                    text = 'options.' + key + ' = [];\n'
+                else:
+                    if key == "masks":
+                        text = 'options.' + key + ' = {'
                     else:
-                        text = text + str(element) + ","
-                text = text[:-1]
-                if key == "masks":
-                    text = text + "};\n"
-                else:
-                    text = text + "];\n"
+                        text = 'options.' + key + ' = ['
+                    for element in options[key]:
+                        # if element in list is str
+                        if isinstance(element, str):
+                            text = text + "'" + element + "',"
+                        # if element in list is float, keep three decimal places
+                        elif isinstance(element, float):
+                            text = text + str('%.3f' % element) + ","
+                        else:
+                            text = text + str(element) + ","
+                    text = text[:-1]
+                    if key == "masks":
+                        text = text + "};\n"
+                    else:
+                        text = text + "];\n"
 
-        elif isinstance(options[key], float):
-            text = 'options.' + key + ' = ' + str('%.3f' % options[key]) + ';\n'
-        else:
-            text = 'options.' + key + ' = ' + str(options[key]) + ';\n'
-        f.write(text)
-    f.close()
+            elif isinstance(options[key], float):
+                text = 'options.' + key + ' = ' + str('%.3f' % options[key]) + ';\n'
+            else:
+                text = 'options.' + key + ' = ' + str(options[key]) + ';\n'
+            f.write(text)
+        f.close()
 
 
 ################################################################################
