@@ -5,6 +5,7 @@ The cellorganizer-python project strives to be a Python 3 package to manage the 
 Supported methods are
 
 * `img2slml(dim, dna, cell, protein, options)`
+* `image2SPHARMparameterization()`
 * `slml2img(filenames, options)`
 * `slml2info(filenames, options)`
 * `slml2slml(files, options)`
