@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='cellorganizer',
-      version='2.0.0',
+      version='2.10.0',
       description='Python wrapper for CellOrganizer binaries',
       author='CellOrganizer Team',
       author_email='cellorganizer-dev@compbio.cmu.edu',
