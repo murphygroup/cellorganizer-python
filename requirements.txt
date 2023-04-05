@@ -5,3 +5,4 @@ tabulate
 aicsimageio
 python-bioformats
 cellpose
+gdown

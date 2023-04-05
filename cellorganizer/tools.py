@@ -6,7 +6,7 @@ from pathlib import Path
 import urllib.request
 import requests
 import uuid
-
+import gdown
 
 ################################################################################
 # Public Methods
@@ -463,7 +463,8 @@ def get_image_collection():
     '''
 
     # url = 'http://www.cellorganizer.org/Downloads/latest/docker/images.zip'
-    url = 'http://www.andrew.cmu.edu/~icaoberg/mmbios-images.zip'
+    # url = 'http://www.andrew.cmu.edu/~icaoberg/mmbios-images.zip'
+    url = "https://drive.google.com/file/d/17baJvOuxv8je-yQHf-fDrUiPjCqkGFc_/view?usp=sharing"
 
     target_path = "/home/murphylab/cellorganizer/local/mmbios-images.zip"
     print('Retrieving ' + url)
@@ -472,10 +473,11 @@ def get_image_collection():
             print('Creating directory /home/murphylab/cellorganizer/local/images/')
             os.mkdir('/home/murphylab/cellorganizer/local/images/')
 
-            response = requests.get(url, stream=True)
-            if response.status_code == 200:
-                with open(target_path, 'wb') as f:
-                    f.write(response.raw.read())
+            # response = requests.get(url, stream=True)
+            # if response.status_code == 200:
+            #     with open(target_path, 'wb') as f:
+            #         f.write(response.raw.read())
+            gdown.download(url, target_path, quiet=False, fuzzy=True)
 
             print("Extracting image files .....")
             os.system(
