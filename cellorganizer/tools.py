@@ -769,6 +769,7 @@ def __save_numpy2mat(numpyarr, output):
     }
     scipy.io.savemat(output, savedict)
 
+
 def __convert_numpydtype_dict(d):
     """
         check to make sure that all numpy arrays are either complex or floats (doubles)
@@ -780,5 +781,7 @@ def __convert_numpydtype_dict(d):
                 continue
             else:
                 d[key] = value.astype('float64')
+        elif isinstance(value, int):
+            d[key] = float(value)
 
     return d
