@@ -6,18 +6,17 @@ from pathlib import Path
 import urllib.request
 import requests
 import uuid
-import gdown
+
 
 ################################################################################
 # Public Methods
 ################################################################################
 def image2SPHARMparameterization(data, options=None):
-
-    #print version
+    # print version
     __get_version()
 
     #######
-    #setup#
+    # setup#
     #######
     unique_filename_img = str(uuid.uuid4())
     unique_filename_params = str(uuid.uuid4())
@@ -49,7 +48,7 @@ def image2SPHARMparameterization(data, options=None):
     text = "image_path = '" + input_img + "';\n"
     f.write(text)
 
-    #write path to save intermediates/outputs
+    # write path to save intermediates/outputs
     text = "options.output_filepath = '" + output_params + "';\n"
     f.write(text)
     f.close()
@@ -60,22 +59,21 @@ def image2SPHARMparameterization(data, options=None):
 
     answer = __mat2python(output_params)
 
-    #add output_params path to dict
+    # add output_params path to dict
     answer['model_path'] = output_params
 
     return answer
 
 
-#########################################git s#######################################
+################################################################################
 def SPHARMparameterization2image(struct, options=None):
-
-    #print version
+    # print version
     if options is None:
         options = {}
     __get_version()
 
     #######
-    #setup#
+    # setup#
     #######
     unique_filename_img = str(uuid.uuid4())
     output_img = '/tmp' + '/' + unique_filename_img + '.mat'
@@ -85,7 +83,7 @@ def SPHARMparameterization2image(struct, options=None):
     txtfilename = "input.txt"
     # f = open(txtfilename, "w")
 
-    #default options
+    # default options
     # text = "options.cropping = 'tight'; \n \
     #         options.oversampling_scale = 1; \n \
     #         options.debug = false; \n"
@@ -95,10 +93,20 @@ def SPHARMparameterization2image(struct, options=None):
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
     # write path to model for matlab to be able to read
-    text = "model_path = '" + struct['model_path'] + "';\n"
+    if 'model_path' in struct:
+        text = "model_path = '" + struct['model_path'] + "';\n"
+    else:  # has faces and deg passed in
+        unique_filename_input = str(uuid.uuid4())
+        input_path = '/tmp' + '/' + unique_filename_input + '.mat'
+        new_struct = __convert_numpydtype_dict(struct)
+        d = {'param_output': new_struct}
+        scipy.io.savemat(input_path, d)
+
+        text = "model_path = '" + input_path + "';\n"
+
     f.write(text)
 
-    #write path to save intermediates/outputs
+    # write path to save intermediates/outputs
     text = "options.output_filepath = '" + output_img + "';\n"
     f.write(text)
     f.close()
@@ -113,12 +121,11 @@ def SPHARMparameterization2image(struct, options=None):
 
 ################################################################################
 def SPHARMparameterization2mesh(struct, options=None):
-
-    #print version
+    # print version
     __get_version()
 
     #######
-    #setup#
+    # setup#
     #######
     unique_filename_mesh = str(uuid.uuid4())
     unique_filename_mesh_figure = str(uuid.uuid4())
@@ -130,7 +137,7 @@ def SPHARMparameterization2mesh(struct, options=None):
     txtfilename = "input.txt"
     # f = open(txtfilename, "w")
 
-    #default options
+    # default options
     # text = "options.figtitle = []; \n \
     #         options.plot = 0; \n \
     #         options.dpi = 150; \n \
@@ -140,8 +147,19 @@ def SPHARMparameterization2mesh(struct, options=None):
 
     __options2txt(options, txtfilename)
     f = open(txtfilename, "a")
-    # write path to model for matlab to be able to read
-    text = "model_path = '" + struct['model_path'] + "';\n"
+    # write path to model for matlab to be able to read if not then you are given 'deg' and 'faces'
+
+    if 'model_path' in struct:
+        text = "model_path = '" + struct['model_path'] + "';\n"
+    else:  # has faces and deg passed in
+        unique_filename_input = str(uuid.uuid4())
+        input_path = '/tmp' + '/' + unique_filename_input + '.mat'
+        new_struct = __convert_numpydtype_dict(struct)
+        d = {'param_output': struct}
+        scipy.io.savemat(input_path, d)
+
+        text = "model_path = '" + input_path + "';\n"
+
     f.write(text)
 
     # write path to save intermediates/outputs
@@ -183,7 +201,7 @@ def img2slml(dim, dna, cell, protein, options):
     options                     Options structure
     '''
 
-    #print version
+    # print version
     __get_version()
 
     txtfilename = "input.txt"
@@ -272,7 +290,7 @@ def slml2info(filenames, options):
     options                  Options structure
     '''
 
-    #print version
+    # print version
     __get_version()
 
     txtfilename = 'input.txt'
@@ -316,7 +334,7 @@ def slml2slml(files, options):
                                default is "model.mat"
     '''
 
-    #print version
+    # print version
     __get_version()
 
     __options2txt(options, "input.txt")
@@ -353,7 +371,7 @@ def slml2report(model1_filename, model2_filename, options):
     answer = slml2report( filename1, filename2, options );
     '''
 
-    #print version
+    # print version
     __get_version()
 
     txtfilename = "input.txt"
@@ -414,7 +432,8 @@ def get_model_files():
         # os.system('rm -fv models.tgz')
         os.system('unzip /home/murphylab/cellorganizer/main.zip -d /home/murphylab/cellorganizer/local/models/')
         os.remove('/home/murphylab/cellorganizer/main.zip')
-        os.system('mv /home/murphylab/cellorganizer/local/models/models-main/* /home/murphylab/cellorganizer/local/models/')
+        os.system(
+            'mv /home/murphylab/cellorganizer/local/models/models-main/* /home/murphylab/cellorganizer/local/models/')
         os.system('rm -rf /home/murphylab/cellorganizer/local/models/models-main/')
         print('Fetched all models...')
         return True
@@ -521,6 +540,7 @@ def __get_version():
 
     with open_text("cellorganizer", "version.txt") as f:
         print(f.read().strip())
+
 
 def __options2txt(options, filename):
     # if os.path.exists(filename):
@@ -740,11 +760,25 @@ def __does_file_exist(url):
 
 
 def __save_numpy2mat(numpyarr, output):
-    '''
-    Helper function to save numpy as mat
-    '''
+    """
+        Helper function to save numpy as mat
+    """
 
     savedict = {
         'cur_image': numpyarr
     }
     scipy.io.savemat(output, savedict)
+
+def __convert_numpydtype_dict(d):
+    """
+        check to make sure that all numpy arrays are either complex or floats (doubles)
+    """
+
+    for key, value in d.items():
+        if isinstance(value, np.ndarray):
+            if value.dtype == 'complex128':
+                continue
+            else:
+                d[key] = value.astype('float64')
+
+    return d
